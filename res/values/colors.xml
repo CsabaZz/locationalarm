@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="shadedBgColor">#C0000000</color>
+    <color name="magentaColor">#F0008C</color>
+    <color name="darkFontColor">#2B2B2B</color>
+    <color name="darkGrayFontColor">#202020</color>
+    <color name="lightGrayFontColor">#666666</color>
+    
+    <color name="blackColor">@android:color/black</color>
+    <color name="whiteColor">@android:color/white</color>
+    
+    <color name="pinkColor">#CEA9B3</color>
+    <color name="purpleColor">#9A9195</color>
+    <color name="grayColor">#939393</color>
+</resources>

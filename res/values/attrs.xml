@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="Theme">
+    	<attr name="switchStyle" format="reference" />
+    </declare-styleable>
+    
+    <declare-styleable name="PullToRefresh">
+
+        <!-- A drawable to use as the background of the Refreshable View -->
+        <attr name="ptrRefreshableViewBackground" format="reference|color" />
+
+        <!-- A drawable to use as the background of the Header and Footer Loading Views -->
+        <attr name="ptrHeaderBackground" format="reference|color" />
+
+        <!-- Text Color of the Header and Footer Loading Views -->
+        <attr name="ptrHeaderTextColor" format="reference|color" />
+
+        <!-- Text Color of the Header and Footer Loading Views Sub Header -->
+        <attr name="ptrHeaderSubTextColor" format="reference|color" />
+
+        <!-- Mode of Pull-to-Refresh that should be used -->
+        <attr name="ptrMode">
+            <flag name="disabled" value="0x0" />
+            <flag name="pullFromStart" value="0x1" />
+            <flag name="pullFromEnd" value="0x2" />
+            <flag name="both" value="0x3" />
+            <flag name="manualOnly" value="0x4" />
+
+            <!-- These last two are depreacted -->
+            <flag name="pullDownFromTop" value="0x1" />
+            <flag name="pullUpFromBottom" value="0x2" />
+        </attr>
+
+        <!-- Whether the Indicator overlay(s) should be used -->
+        <attr name="ptrShowIndicator" format="reference|boolean" />
+
+        <!-- Drawable to use as Loading Indicator. Changes both Header and Footer. -->
+        <attr name="ptrDrawable" format="reference" />
+
+        <!-- Drawable to use as Loading Indicator in the Header View. Overrides value set in ptrDrawable. -->
+        <attr name="ptrDrawableStart" format="reference" />
+
+        <!-- Drawable to use as Loading Indicator in the Footer View. Overrides value set in ptrDrawable. -->
+        <attr name="ptrDrawableEnd" format="reference" />
+
+        <!-- Whether Android's built-in Over Scroll should be utilised for Pull-to-Refresh. -->
+        <attr name="ptrOverScroll" format="reference|boolean" />
+
+        <!-- Base text color, typeface, size, and style for Header and Footer Loading Views -->
+        <attr name="ptrHeaderTextAppearance" format="reference" />
+
+        <!-- Base text color, typeface, size, and style for Header and Footer Loading Views Sub Header -->
+        <attr name="ptrSubHeaderTextAppearance" format="reference" />
+
+        <!-- Style of Animation should be used displayed when pulling. -->
+        <attr name="ptrAnimationStyle">
+            <flag name="rotate" value="0x0" />
+            <flag name="flip" value="0x1" />
+        </attr>
+
+        <!-- Whether the user can scroll while the View is Refreshing -->
+        <attr name="ptrScrollingWhileRefreshingEnabled" format="reference|boolean" />
+
+        <!--
+        	Whether PullToRefreshListView has it's extras enabled. This allows the user to be 
+        	able to scroll while refreshing, and behaves better. It acheives this by adding
+        	Header and/or Footer Views to the ListView.
+        -->
+        <attr name="ptrListViewExtrasEnabled" format="reference|boolean" />
+
+        <!--
+        	Whether the Drawable should be continually rotated as you pull. This only
+        	takes effect when using the 'Rotate' Animation Style.
+        -->
+        <attr name="ptrRotateDrawableWhilePulling" format="reference|boolean" />
+
+        <!-- BELOW HERE ARE DEPRECEATED. DO NOT USE. -->
+        <attr name="ptrAdapterViewBackground" format="reference|color" />
+        <attr name="ptrDrawableTop" format="reference" />
+        <attr name="ptrDrawableBottom" format="reference" />
+    </declare-styleable>
+    
+    <declare-styleable name="Switch">
+        <!-- Drawable to use as the "thumb" that switches back and forth. -->
+        <attr name="thumb" format="reference"/>
+        <!-- Drawable to use as the "track" that the switch thumb slides within. -->
+        <attr name="track" format="reference"/>
+        <!-- Text to use when the switch is in the checked/"on" state. -->
+        <attr name="textOn" format="string"/>
+        <!-- Text to use when the switch is in the unchecked/"off" state. -->
+        <attr name="textOff" format="string"/>
+        <!-- Amount of padding on either side of text within the switch thumb. -->
+        <attr name="thumbTextPadding" format="dimension" />
+        <!-- TextAppearance style for text displayed on the switch thumb. -->
+        <attr name="switchTextAppearance" format="reference" />
+        <!-- Minimum width for the switch component -->
+        <attr name="switchMinWidth" format="dimension" />
+        <!-- Minimum space between the switch and caption text -->
+        <attr name="switchPadding" format="dimension" />
+        <!-- Checked state for the switcher -->
+        <attr name="state_checked" format="boolean"/>
+    </declare-styleable>
+    <declare-styleable name="TextAppearance">
+        <!-- Text color. -->
+        <attr name="textColor" format="reference|color"/>
+        <!-- Size of the text. Recommended dimension type for text is "sp" for scaled-pixels (example: 15sp). -->
+        <attr name="textSize" format="dimension"/>
+        <!-- Style (bold, italic, bolditalic) for the text. -->
+	    <attr name="textStyle">
+	        <flag name="normal" value="0" />
+	        <flag name="bold" value="1" />
+	        <flag name="italic" value="2" />
+	    </attr>
+        <!-- Typeface (normal, sans, serif, monospace) for the text. -->
+	    <attr name="typeface">
+	        <enum name="normal" value="0" />
+	        <enum name="sans" value="1" />
+	        <enum name="serif" value="2" />
+	        <enum name="monospace" value="3" />
+	    </attr>
+        <!-- Color of the text selection highlight. -->
+        <attr name="textColorHighlight" format="reference|color" />
+        <!-- Color of the hint text. -->
+        <attr name="textColorHint" format="reference|color" />
+        <!-- Color of the links. -->
+        <attr name="textColorLink" format="reference|color" />
+        <!-- Present the text in ALL CAPS. This may use a small-caps form when available. -->
+        <attr name="textAllCaps" format="boolean" />
+    </declare-styleable>
+    <declare-styleable name="GridLayout">
+        <!-- The orientation property is not used during layout. It is only used to
+        allocate row and column parameters when they are not specified by its children's
+        layout paramters. GridLayout works like LinearLayout in this case;
+        putting all the components either in a single row or in a single column -
+        depending on the value of this flag. In the horizontal case, a columnCount
+        property may be additionally supplied to force new rows to be created when a
+        row is full. The rowCount attribute may be used similarly in the vertical case.
+        The default is horizontal. -->
+        <attr name="orientation">
+	        <!-- Defines an horizontal widget. -->
+	        <enum name="horizontal" value="0" />
+	        <!-- Defines a vertical widget. -->
+	        <enum name="vertical" value="1" />
+	    </attr>
+        <!-- The maxmimum number of rows to create when automatically positioning children. -->
+        <attr name="rowCount" format="integer" />
+        <!-- The maxmimum number of columns to create when automatically positioning children. -->
+        <attr name="columnCount" format="integer" />
+        <!-- When set to true, tells GridLayout to use default margins when none are specified
+        in a view's layout parameters.
+        The default value is false.
+        See {@link android.widget.GridLayout#setUseDefaultMargins(boolean)}.-->
+        <attr name="useDefaultMargins" format="boolean" />
+        <!-- When set to alignMargins, causes alignment to take place between the outer
+        boundary of a view, as defined by its margins. When set to alignBounds,
+        causes alignment to take place between the edges of the view.
+        The default is alignMargins.
+        See {@link android.widget.GridLayout#setAlignmentMode(int)}.-->
+	    <attr name="alignmentMode">
+	        <!-- Align the bounds of the children.
+	        See {@link android.widget.GridLayout#ALIGN_BOUNDS}. -->
+	        <enum name="alignBounds" value="0" />
+	        <!-- Align the margins of the children.
+	        See {@link android.widget.GridLayout#ALIGN_MARGINS}. -->
+	        <enum name="alignMargins" value="1" />
+	    </attr>
+        <!-- When set to true, forces row boundaries to appear in the same order
+        as row indices.
+        The default is true.
+        See {@link android.widget.GridLayout#setRowOrderPreserved(boolean)}.-->
+        <attr name="rowOrderPreserved" format="boolean" />
+        <!-- When set to true, forces column boundaries to appear in the same order
+        as column indices.
+        The default is true.
+        See {@link android.widget.GridLayout#setColumnOrderPreserved(boolean)}.-->
+        <attr name="columnOrderPreserved" format="boolean" />
+    </declare-styleable>
+        <declare-styleable name="GridLayout_Layout">
+        <!-- The row boundary delimiting the top of the group of cells
+        occupied by this view. -->
+        <attr name="layout_row" format="integer" />
+        <!-- The row span: the difference between the bottom and top
+        boundaries delimiting the group of cells occupied by this view.
+        The default is one.
+        See {@link android.widget.GridLayout.Spec}. -->
+        <attr name="layout_rowSpan" format="integer" min="1" />
+        <!-- The column boundary delimiting the left of the group of cells
+        occupied by this view. -->
+        <attr name="layout_column" format="integer" />
+        <!-- The column span: the difference between the right and left
+        boundaries delimiting the group of cells occupied by this view.
+        The default is one.
+        See {@link android.widget.GridLayout.Spec}. -->
+        <attr name="layout_columnSpan" format="integer" min="1" />
+        <!-- Gravity specifies how a component should be placed in its group of cells.
+        The default is LEFT | BASELINE.
+        See {@link android.widget.GridLayout.LayoutParams#setGravity(int)}. -->
+	    <attr name="layout_gravity">
+	        <!-- Push object to the top of its container, not changing its size. -->
+	        <flag name="top" value="0x30" />
+	        <!-- Push object to the bottom of its container, not changing its size. -->
+	        <flag name="bottom" value="0x50" />
+	        <!-- Push object to the left of its container, not changing its size. -->
+	        <flag name="left" value="0x03" />
+	        <!-- Push object to the right of its container, not changing its size. -->
+	        <flag name="right" value="0x05" />
+	        <!-- Place object in the vertical center of its container, not changing its size. -->
+	        <flag name="center_vertical" value="0x10" />
+	        <!-- Grow the vertical size of the object if needed so it completely fills its container. -->
+	        <flag name="fill_vertical" value="0x70" />
+	        <!-- Place object in the horizontal center of its container, not changing its size. -->
+	        <flag name="center_horizontal" value="0x01" />
+	        <!-- Grow the horizontal size of the object if needed so it completely fills its container. -->
+	        <flag name="fill_horizontal" value="0x07" />
+	        <!-- Place the object in the center of its container in both the vertical and horizontal axis, not changing its size. -->
+	        <flag name="center" value="0x11" />
+	        <!-- Grow the horizontal and vertical size of the object if needed so it completely fills its container. -->
+	        <flag name="fill" value="0x77" />
+	        <!-- Additional option that can be set to have the top and/or bottom edges of
+	             the child clipped to its container's bounds.
+	             The clip will be based on the vertical gravity: a top gravity will clip the bottom
+	             edge, a bottom gravity will clip the top edge, and neither will clip both edges. -->
+	        <flag name="clip_vertical" value="0x80" />
+	        <!-- Additional option that can be set to have the left and/or right edges of
+	             the child clipped to its container's bounds.
+	             The clip will be based on the horizontal gravity: a left gravity will clip the right
+	             edge, a right gravity will clip the left edge, and neither will clip both edges. -->
+	        <flag name="clip_horizontal" value="0x08" />
+	        <!-- Push object to the beginning of its container, not changing its size. -->
+	        <flag name="start" value="0x00800003" />
+	        <!-- Push object to the end of its container, not changing its size. -->
+	        <flag name="end" value="0x00800005" />
+	    </attr>
+    </declare-styleable>
+</resources>

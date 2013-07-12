@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+	android:layout_width="fill_parent" android:layout_height="0dp" android:gravity="bottom" >
+	<RelativeLayout android:id="@+ptr/header" android:padding="5dp" 
+		android:layout_width="fill_parent" android:layout_height="wrap_content">
+		<ImageView android:id="@+ptr/image" android:src="@drawable/arrow_ptr" 
+			android:layout_width="wrap_content" android:layout_height="wrap_content" 
+			android:layout_marginLeft="25dp" android:scaleType="fitCenter"/>
+		<ProgressBar android:id="@+ptr/spinner" style="@android:style/Widget.ProgressBar.Small" 
+			android:layout_width="wrap_content" android:layout_height="wrap_content" 
+			android:layout_marginLeft="25dp" android:indeterminate="true"/>
+		<LinearLayout android:layout_width="wrap_content" android:layout_height="fill_parent" 
+			android:layout_centerInParent="true" android:orientation="vertical" 
+			android:gravity="center_horizontal">
+			<TextView android:id="@+ptr/text" 
+				android:layout_width="fill_parent" android:layout_height="wrap_content" 
+				android:layout_weight="1" android:gravity="center" 
+				android:textAppearance="?android:attr/textAppearanceMedium" 
+				android:textStyle="bold" android:textColor="@android:color/black" />
+			<TextView android:id="@+ptr/last_updated" 
+				android:layout_width="fill_parent" android:layout_height="wrap_content" 
+				android:layout_weight="1" android:gravity="center" 
+				android:layout_below="@+ptr/text" android:textAppearance="?android:attr/textAppearanceSmall" 
+				android:textColor="@android:color/black" android:textStyle="normal" 
+				android:visibility="gone"/>
+		</LinearLayout>
+	</RelativeLayout>
+</LinearLayout>

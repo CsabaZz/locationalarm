@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+    android:id="@+id/main_drawer" android:layout_width="match_parent" android:layout_height="match_parent">
+	<com.bitknights.locationalarm.view.StateViewFlipper android:id="@+id/contentFlipper" android:background="#ECE9E1" 
+		android:layout_width="match_parent" android:layout_height="match_parent"/>
+	<FrameLayout android:id="@+id/menu_frame" android:background="#F3F3F4" 
+		android:layout_width="300dp" android:layout_height="match_parent" 
+		android:layout_gravity="start"/>
+</android.support.v4.widget.DrawerLayout>

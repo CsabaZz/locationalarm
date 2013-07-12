@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" 
+        android:fillViewport="true" 
+        android:layout_gravity="center">
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="40dp"
+            android:paddingRight="40dp"
+            android:minHeight="380dp" >
+
+            <ImageView
+                android:id="@+about/imgvLogoImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="24dp"
+                android:scaleType="fitCenter"/>
+
+            <Button
+                android:id="@+about/btnWebpageButton"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+about/imgvLogoImage"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="32dp"
+                android:text="@string/aboutWebpage"/>
+
+            <Button
+                android:id="@+about/btnFollowButton"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+about/btnWebpageButton"
+                android:layout_below="@+about/btnWebpageButton"
+                android:layout_marginTop="16dp"
+                android:text="@string/aboutActionFollow"/>
+
+            <Button
+                android:id="@+about/btnTweetButton"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_alignRight="@+about/btnWebpageButton"
+                android:layout_below="@+about/btnWebpageButton"
+                android:layout_marginTop="16dp"
+                android:text="@string/aboutActionTweet"/>
+
+            <Button
+                android:id="@+about/btnLikeButton"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+about/btnWebpageButton"
+                android:layout_below="@+about/btnFollowButton"
+                android:layout_marginTop="16dp"
+                android:text="@string/aboutActionLike"/>
+
+            <Button
+                android:id="@+about/btnShareButton"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_alignRight="@+about/btnWebpageButton"
+                android:layout_below="@+about/btnTweetButton"
+                android:layout_marginTop="16dp"
+                android:text="@string/aboutActionShare"/>
+            
+            <Button
+                android:id="@+about/btnEmail"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+about/btnLikeButton"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:text="@string/aboutActionEmail"/>
+            
+        </RelativeLayout>
+    </ScrollView>
+
+    <TextView
+        android:id="@+about/version"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textSize="13sp"
+        android:typeface="sans" />
+    
+    <TextView
+        android:id="@+about/copyright"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:gravity="center_horizontal"
+        android:text="@string/aboutCopyright"
+        android:textSize="13sp"
+        android:typeface="sans" />
+
+</LinearLayout>

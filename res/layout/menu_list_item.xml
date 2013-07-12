@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheckedTextView xmlns:android="http://schemas.android.com/apk/res/android" 
+    android:id="@+menu_list_item/titleText" android:background="@drawable/background_header" 
+    android:layout_width="fill_parent" android:layout_height="48dp" 
+    android:paddingLeft="16dp" android:paddingRight="56dp" 
+    android:focusable="false" android:focusableInTouchMode="false" 
+    android:textColor="@color/blackColor" android:textStyle="bold" 
+    android:shadowColor="@color/whiteColor" android:shadowRadius="1.5" 
+    android:shadowDx="3" android:shadowDy="3" android:gravity="left|center_vertical"
+/>
