@@ -8,14 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
-import com.bitknights.locationalarm.LaunchActivity.Menu;
 import com.bitknights.locationalarm.utils.image.ImageManager;
 import com.bitknights.locationalarm.utils.image.ImageUtils;
-import com.bitknights.locationalarm.view.StateRelativeLayout;
-import com.bitknights.locationalarm.view.StateRelativeLayout.OnVisibilityChangedListener;
 
 
-public abstract class BaseFragment extends Fragment implements OnVisibilityChangedListener {
+public abstract class BaseFragment extends Fragment {
 
     protected RelativeLayout mRootLayout;
     protected ImageManager mImageManager;
@@ -37,9 +34,6 @@ public abstract class BaseFragment extends Fragment implements OnVisibilityChang
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 	View view = inflater.inflate(R.layout.root, null, false);
-	if (view instanceof StateRelativeLayout) {
-	    ((StateRelativeLayout) view).setOnVisibilityChangedListener(this);
-	}
 	
 	mRootLayout = (RelativeLayout) view.findViewById(R.root.rootLayout);
 
@@ -49,6 +43,12 @@ public abstract class BaseFragment extends Fragment implements OnVisibilityChang
 	view.setTag(this);
 
 	return view;
+    }
+    
+    @Override
+    public void onResume() {
+        super.onResume();
+        doHeavyLoad();
     }
 
     @Override
@@ -60,10 +60,6 @@ public abstract class BaseFragment extends Fragment implements OnVisibilityChang
 	}
 
 	final View view = getView();
-	if (view instanceof StateRelativeLayout) {
-	    ((StateRelativeLayout) view).setOnVisibilityChangedListener(null);
-	}
-
 	ImageUtils.unbindDrawables(view);
 
 	super.onDestroyView();
@@ -118,10 +114,6 @@ public abstract class BaseFragment extends Fragment implements OnVisibilityChang
 	this.mLockUIActions = false;
     }
 
-    public Menu getMenuStyle() {
-	return Menu.PRIMARY;
-    }
-
     public int getMenuIndex() {
 	return this.mMenuIndex;
     }
@@ -129,8 +121,5 @@ public abstract class BaseFragment extends Fragment implements OnVisibilityChang
     public void setMenuIndex(int index) {
 	this.mMenuIndex = index;
     }
-
-    @Override
-    public void onVisibilityChanged(int visibility) {
-    }
+    
 }

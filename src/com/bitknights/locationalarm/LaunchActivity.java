@@ -13,9 +13,6 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Handler.Callback;
-import android.os.Message;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -23,11 +20,8 @@ import android.view.KeyEvent;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
-import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
-import android.widget.ViewFlipper;
+import android.widget.ShareActionProvider;
 
 import com.bitknights.locationalarm.info.AboutFragment;
 import com.bitknights.locationalarm.locations.LocationsFragment;
@@ -36,13 +30,10 @@ import com.bitknights.locationalarm.settings.SettingsFragment;
 import com.bitknights.locationalarm.utils.Utils;
 import com.bitknights.locationalarm.utils.image.ImageManager;
 import com.bitknights.locationalarm.utils.image.ImageUtils;
-import com.bitknights.locationalarm.view.StateViewFlipper;
-import com.bitknights.locationalarm.view.StateViewFlipper.OnChildAddedListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
-public class LaunchActivity extends Activity implements Runnable, Callback, AnimationListener,
-	OnChildAddedListener, OnClickListener {
+public class LaunchActivity extends Activity implements Runnable, OnClickListener {
     
     public interface OnBackPressedListener {
 	public boolean onBackPressed();
@@ -80,14 +71,6 @@ public class LaunchActivity extends Activity implements Runnable, Callback, Anim
 	}
 	
     }
-
-    public enum Menu {
-	PRIMARY, SECONDARY
-    }
-    
-    private static final int MESSAGE_ANIMATION = 0;
-
-    private static final int DELAY_ANIMATION = 200;
     
     private static final int REQUEST_GOOGLEPLAY_SERVICES = 1122;
     
@@ -97,22 +80,11 @@ public class LaunchActivity extends Activity implements Runnable, Callback, Anim
     
     private DrawerLayout mDrawerLayout;
     private FrameLayout mMenuFrame;
-    private StateViewFlipper mContentFlipper;
+    private FrameLayout mContentFrame;
     
     private DrawerToggle mDrawerToggle;
     
-    private Animation mLeftInAnimation;
-    private Animation mLeftOutAnimation;
-
-    private Animation mRightInAnimation;
-    private Animation mRightOutAnimation;
-    
     private LocationsFragment mLocationFragment;
-    private BaseFragment mNewFragment;
-
-    private Handler mAnimHandler;
-    
-    private boolean mIsAnimationRunning;
     
     private CharSequence mTitle;
     private CharSequence mMenuTitle;
@@ -141,12 +113,11 @@ public class LaunchActivity extends Activity implements Runnable, Callback, Anim
 	this.mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START); 
 	this.mDrawerLayout.setDrawerListener(this.mDrawerToggle);
 
-	this.mContentFlipper = (StateViewFlipper) findViewById(R.id.contentFlipper);
-	this.mContentFlipper.setOnChildAddedListener(this);
+	this.mContentFrame = (FrameLayout) findViewById(R.id.content_frame);
 
 	if (null == savedInstanceState) {
 	    // Lazy initialize the activity to get start as fast as we can
-	    this.mContentFlipper.postDelayed(this, 1000);
+	    this.mContentFrame.postDelayed(this, 1000);
 	} else {
 	    this.mMenuListFragment = (MenuListFragment) findFragmentById(R.id.menu_frame);
 	    runOnUiThread(this);
@@ -161,23 +132,9 @@ public class LaunchActivity extends Activity implements Runnable, Callback, Anim
 
     @Override
     public void run() {
-	if(this.isFinishing() || this.mContentFlipper == null) {
+	if(this.isFinishing() || this.mContentFrame == null) {
 	    return;
 	}
-	
-	this.mAnimHandler = new Handler(this);
-
-	this.mLeftInAnimation = AnimationUtils.loadAnimation(this, R.anim.push_left_in);
-	this.mLeftOutAnimation = AnimationUtils.loadAnimation(this, R.anim.push_left_out);
-
-	this.mRightInAnimation = AnimationUtils.loadAnimation(this, R.anim.push_right_in);
-	this.mRightOutAnimation = AnimationUtils.loadAnimation(this, R.anim.push_right_out);
-
-	this.mLeftInAnimation.setAnimationListener(this);
-	this.mLeftOutAnimation.setAnimationListener(this);
-
-	this.mRightInAnimation.setAnimationListener(this);
-	this.mRightOutAnimation.setAnimationListener(this);
 
 	if (null == this.mMenuListFragment) {
 	    this.mMenuListFragment = new MenuListFragment();
@@ -197,27 +154,35 @@ public class LaunchActivity extends Activity implements Runnable, Callback, Anim
 	super.onResume();
 
 	if (Utils.isOnline()) {
-	    final Context context = StaticContextApplication.getAppContext();
-	    int checkGooglePlayServices = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
-	    if (checkGooglePlayServices != ConnectionResult.SUCCESS) {
-		GooglePlayServicesUtil.getErrorDialog(checkGooglePlayServices, this, REQUEST_GOOGLEPLAY_SERVICES).show();
-	    }
+	    showInstallDialog();
 	} else {
-	    AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-	    dialog.setCancelable(false);
-	    dialog.setTitle(R.string.netTitle);
-	    dialog.setMessage(R.string.netText);
-	    dialog.setPositiveButton(android.R.string.ok, this);
-	    dialog.show();
+	    showNoConnectionDialog();
 	}
     }
     
+    private void showInstallDialog() {
+	final Context context = StaticContextApplication.getAppContext();
+	int checkGooglePlayServices = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
+	if (checkGooglePlayServices != ConnectionResult.SUCCESS) {
+	    GooglePlayServicesUtil.getErrorDialog(checkGooglePlayServices, this, REQUEST_GOOGLEPLAY_SERVICES).show();
+	}
+    }
+
+    private void showNoConnectionDialog() {
+	AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+	dialog.setCancelable(false);
+	dialog.setTitle(R.string.netTitle);
+	dialog.setMessage(R.string.netText);
+	dialog.setPositiveButton(android.R.string.ok, this);
+	dialog.show();
+    }
+
     @Override
     protected void onActivityResult(int responseCode, int requestCode, Intent data) {
         super.onActivityResult(responseCode, requestCode, data);
         
         if(requestCode == REQUEST_GOOGLEPLAY_SERVICES) {
-            // TODO implement me!!!
+	    showInstallDialog();
         }
     }
 
@@ -235,25 +200,26 @@ public class LaunchActivity extends Activity implements Runnable, Callback, Anim
 
     @Override
     protected void onDestroy() {
-	this.mDrawerToggle.cleanUp();
-	this.mDrawerToggle = null;
+	if(null != this.mDrawerToggle){
+	    this.mDrawerToggle.cleanUp();
+	}
 	
-	this.mDrawerLayout.setDrawerListener(null);
+	this.mDrawerToggle = null;
+
+	if(null != this.mDrawerLayout){
+	    this.mDrawerLayout.setDrawerListener(null);
+	}
+	
 	this.mDrawerLayout = null;
 
 	this.mMenuListFragment = null;
 	this.mLocationFragment = null;
-	this.mNewFragment = null;
 	
-	this.mContentFlipper = null;
-
-	this.mAnimHandler = null;
-
-	this.mLeftInAnimation = destroyAnimation(this.mLeftInAnimation);
-	this.mLeftOutAnimation = destroyAnimation(this.mLeftOutAnimation);
-
-	this.mRightInAnimation = destroyAnimation(this.mRightInAnimation);
-	this.mRightOutAnimation = destroyAnimation(this.mRightOutAnimation);
+	if(null != this.mContentFrame){
+	    this.mContentFrame.removeAllViews();
+	}
+	
+	this.mContentFrame = null;
 
 	ImageManager.clearDiscCache();
 	ImageUtils.destroyAll();
@@ -266,13 +232,31 @@ public class LaunchActivity extends Activity implements Runnable, Callback, Anim
     @Override
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
 	MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main, menu); 
+        inflater.inflate(R.menu.main, menu);
+
+        //MenuItem searchItem = menu.findItem(R.id.action_search);
+        //SearchView searchView = (SearchView) searchItem.getActionView();
+
+        MenuItem shareItem = menu.findItem(R.id.action_share);
+        ShareActionProvider shareActionProvider = (ShareActionProvider) shareItem.getActionProvider();
+        shareActionProvider.setShareHistoryFileName(ShareActionProvider.DEFAULT_SHARE_HISTORY_FILE_NAME); 
+        shareActionProvider.setShareIntent(createShareIntent());
+        
         return super.onCreateOptionsMenu(menu);
     }
     
+    private Intent createShareIntent() {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/*");
+        shareIntent.putExtra(Intent.EXTRA_TITLE, ""); //TODO put valid title into share Intent
+        shareIntent.putExtra(Intent.EXTRA_TEXT, ""); //TODO put valid text into share Intent
+        return shareIntent;
+    }
+
     @Override
     public boolean onPrepareOptionsMenu(android.view.Menu menu) {
 	boolean menuOpened = isMenuOpened();
+        menu.findItem(R.id.action_share).setVisible(!menuOpened); 
         menu.findItem(R.id.action_search).setVisible(!menuOpened); 
         return super.onPrepareOptionsMenu(menu);
     }
@@ -281,14 +265,9 @@ public class LaunchActivity extends Activity implements Runnable, Callback, Anim
     public boolean onOptionsItemSelected(MenuItem item) {
 	if (this.mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
-        }
-	
-	switch(item.getItemId()) {
-        case R.id.action_search:
-            return true;
-        default:
+        } else {
             return super.onOptionsItemSelected(item);
-        } 
+        }
     }
     
     @Override
@@ -323,19 +302,9 @@ public class LaunchActivity extends Activity implements Runnable, Callback, Anim
 	this.mBackPressedObservers.remove(listener);
     }
 
-    private Animation destroyAnimation(Animation animation) {
-	if (null != animation) {
-	    animation.setAnimationListener(null);
-	}
-
-	return null;
-    }
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-	if (this.mIsAnimationRunning) {
-	    return true;
-	} else if (keyCode == KeyEvent.KEYCODE_BACK && this.mDrawerLayout.isDrawerOpen(this.mMenuFrame)) {
+	if (keyCode == KeyEvent.KEYCODE_BACK && this.mDrawerLayout.isDrawerOpen(this.mMenuFrame)) {
 	    closeMenu();
 	    return true;
 	} else if (keyCode == KeyEvent.KEYCODE_MENU) {
@@ -348,19 +317,6 @@ public class LaunchActivity extends Activity implements Runnable, Callback, Anim
 		if (listener.onBackPressed()) {
 		    return true;
 		}
-	    }
-
-	    if (this.mContentFlipper.getChildCount() > 1) {
-		final FragmentManager manager = getFragmentManager();
-		BaseFragment fragment = (BaseFragment) manager.findFragmentByTag(String.valueOf(this.mContentFlipper
-			.getChildCount()));
-		if (fragment != null) {
-		    fragment.lockUIActions();
-		}
-
-		showPreviousContent();
-
-		return true;
 	    }
 	}
 
@@ -376,7 +332,7 @@ public class LaunchActivity extends Activity implements Runnable, Callback, Anim
 	    final FragmentTransaction transaction = manager.beginTransaction();
 
 	    this.mLocationFragment = LocationsFragment.instantiate(this, MenuListFragment.HOMEPAGE_POSITION);
-	    transaction.add(this.mContentFlipper.getId(), this.mLocationFragment,
+	    transaction.add(this.mContentFrame.getId(), this.mLocationFragment,
 		    this.mLocationFragment.getStackName());
 	    transaction.commit();
 	}
@@ -387,41 +343,21 @@ public class LaunchActivity extends Activity implements Runnable, Callback, Anim
     }
 
     public void changeFragment(BaseFragment fragment, boolean animate) {
-	final ViewFlipper contentFlipper = this.mContentFlipper;
+	final FrameLayout contentFrame = this.mContentFrame;
 
 	if (fragment.isAdded()) {
-	    this.mContentFlipper.addView(fragment.getView());
+	    contentFrame.addView(fragment.getView());
 	} else {
-	    this.mNewFragment = fragment;
-
 	    final FragmentManager manager = getFragmentManager();
 	    final FragmentTransaction transaction = manager.beginTransaction();
-	    transaction.add(contentFlipper.getId(), fragment, fragment.getStackName());
-
-	    transaction.setTransition(FragmentTransaction.TRANSIT_NONE);
+	    transaction.setCustomAnimations(R.animator.push_right_in, R.animator.push_left_out, R.animator.push_left_in, R.animator.push_right_out);
+	    transaction.addToBackStack(fragment.getStackName());
+	    
+	    transaction.replace(contentFrame.getId(), fragment, fragment.getStackName());
 	    transaction.commit();
 	}
-    }
-
-    private void showNextContent() {
-	closeMenu();
 	
-	final ViewFlipper contentFlipper = this.mContentFlipper;
-	contentFlipper.setInAnimation(this.mRightInAnimation);
-	contentFlipper.setOutAnimation(this.mLeftOutAnimation);
-
-	contentFlipper.setDisplayedChild(contentFlipper.getChildCount() - 1);
-    }
-
-    private void showPreviousContent() {
-	this.mIsAnimationRunning = true;
-
-	final ViewFlipper contentFlipper = this.mContentFlipper;
-
-	contentFlipper.setInAnimation(this.mLeftInAnimation);
-	contentFlipper.setOutAnimation(this.mRightOutAnimation);
-
-	contentFlipper.showPrevious();
+	closeMenu();
     }
 
     private Fragment findFragmentById(int parentId) {
@@ -490,87 +426,6 @@ public class LaunchActivity extends Activity implements Runnable, Callback, Anim
     @Override
     public void onClick(DialogInterface arg0, int arg1) {
 	finish();
-    }
-    
-    @Override
-    public boolean handleMessage(Message msg) {
-	if (isFinishing() || this.mContentFlipper == null) {
-	    return true;
-	}
-
-	if (msg.what == -1) {
-	    this.mLeftInAnimation.setAnimationListener(LaunchActivity.this);
-	    this.mLeftOutAnimation.setAnimationListener(LaunchActivity.this);
-
-	    this.mRightInAnimation.setAnimationListener(LaunchActivity.this);
-	    this.mRightOutAnimation.setAnimationListener(LaunchActivity.this);
-	    
-	    return true;
-	} else if (msg.what == MESSAGE_ANIMATION) {
-	    final Animation animation = (Animation) msg.obj;
-
-	    if (animation == this.mRightInAnimation) {
-		if (this.mNewFragment != null) {
-		    this.mNewFragment.doHeavyLoad();
-		    this.mNewFragment = null;
-		}
-	    } else if (animation == this.mLeftInAnimation) {
-		int displayedChildPosition = this.mContentFlipper.getDisplayedChild();
-		if (displayedChildPosition < this.mContentFlipper.getChildCount()) {
-		    int previousPosition = displayedChildPosition + 1;
-		    View lastChild = this.mContentFlipper.getChildAt(previousPosition);
-		    if (lastChild != null) {
-			this.mContentFlipper.removeView(lastChild);
-
-			final FragmentManager manager = getFragmentManager();
-			final FragmentTransaction transaction = manager.beginTransaction();
-			transaction.remove((Fragment) lastChild.findViewById(R.root.rootLayout).getTag());
-			transaction.setTransition(FragmentTransaction.TRANSIT_NONE);
-			transaction.commit();
-		    }
-		}
-
-		final View child = this.mContentFlipper.getChildAt(displayedChildPosition);
-		final View childRoot = child.findViewById(R.root.rootLayout);
-		final BaseFragment fragment = (BaseFragment) childRoot.getTag();
-
-		final int menuIndex = fragment.getMenuIndex();
-		this.mMenuListFragment.select(menuIndex);
-
-		this.mIsAnimationRunning = false;
-	    }
-
-	    return true;
-	} else {
-	    return false;
-	}
-    }
-
-    @Override
-    public void onChildAdded(View child) {
-	if (this.mContentFlipper.getChildCount() > 1) {
-	    showNextContent();
-	}
-    }
-
-    @Override
-    public void onAnimationEnd(Animation animation) {
-	if (animation == this.mRightInAnimation) {
-	    closeMenu();
-	}
-
-	Message msg = Message.obtain(this.mAnimHandler, MESSAGE_ANIMATION, animation);
-	this.mAnimHandler.sendMessageDelayed(msg, DELAY_ANIMATION);
-    }
-
-    @Override
-    public void onAnimationRepeat(Animation animation) {
-	// Not used by now
-    }
-
-    @Override
-    public void onAnimationStart(Animation animation) {
-	// Not used by now
     }
 
 }
