@@ -1,3 +1,4 @@
+
 package com.bitknights.locationalarm.menu;
 
 import java.util.ArrayList;
@@ -10,132 +11,139 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckedTextView;
 
-import com.bitknights.locationalarm.R;
 import com.bitknights.locationalarm.BaseListAdapter;
+import com.bitknights.locationalarm.R;
 import com.bitknights.locationalarm.StaticContextApplication;
+import com.bitknights.locationalarm.data.local.AbstractMenu;
 import com.bitknights.locationalarm.data.local.Menu;
 
-public class MenuListAdapter extends BaseListAdapter<Menu> {
+public class MenuListAdapter extends BaseListAdapter<AbstractMenu> {
     private static final String STATE_SELECTION = "MenuListAdapter::SelectionState";
 
     private static class ViewHolder {
-	public CheckedTextView titleText;
+        public CheckedTextView titleText;
     }
 
-    private ArrayList<Menu> mItems;
+    private ArrayList<AbstractMenu> mItems;
     private LayoutInflater mInflater;
 
     private int mSelectedPosition;
 
     public MenuListAdapter() {
-	super();
+        super();
 
-	this.mItems = new ArrayList<Menu>();
-	this.mSelectedPosition = 0;
+        this.mItems = new ArrayList<AbstractMenu>();
+        this.mSelectedPosition = 0;
 
-	final Context context = StaticContextApplication.getAppContext();
-	this.mInflater = LayoutInflater.from(context);
+        final Context context = StaticContextApplication.getAppContext();
+        this.mInflater = LayoutInflater.from(context);
     }
 
     @Override
     public void cleanUp() {
-	this.mInflater = null;
+        this.mInflater = null;
 
-	this.mItems.clear();
-	this.mItems = null;
+        this.mItems.clear();
+        this.mItems = null;
 
-	notifyDataSetChanged();
+        notifyDataSetChanged();
     }
 
     @Override
     public int getCount() {
-	return this.mItems == null ? 0 : this.mItems.size();
+        return this.mItems == null ? 0 : this.mItems.size();
     }
 
     @Override
     public Object getItem(int position) {
-	return this.mItems.get(position);
+        return this.mItems.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-	return position;
+        return position;
     }
 
     private View newView(int position, View convertView) {
-	ViewHolder holder = new ViewHolder();
+        ViewHolder holder = new ViewHolder();
 
-	View view = this.mInflater.inflate(R.layout.menu_list_item, null, false);
-	// view.setOnTouchListener(Utils.touchListener);
-	view.setTag(holder);
+        View view = this.mInflater.inflate(R.layout.menu_list_item, null, false);
+        // view.setOnTouchListener(Utils.touchListener);
+        view.setTag(holder);
 
-	holder.titleText = (CheckedTextView) view.findViewById(R.menu_list_item.titleText);
+        holder.titleText = (CheckedTextView) view.findViewById(R.menu_list_item.titleText);
 
-	return view;
+        return view;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-	if (convertView == null) {
-	    convertView = newView(position, convertView);
-	}
+        if (convertView == null) {
+            convertView = newView(position, convertView);
+        }
 
-	bindView(position, convertView);
+        bindView(position, convertView);
 
-	return convertView;
+        return convertView;
     }
 
     private void bindView(int position, View convertView) {
-	ViewHolder holder = (ViewHolder) convertView.getTag();
-	Menu item = this.mItems.get(position);
+        ViewHolder holder = (ViewHolder) convertView.getTag();
+        AbstractMenu item = this.mItems.get(position);
 
-	//final Context context = StaticContextApplication.getAppContext();
-	//final Resources resources = context.getResources();
+        final Context context = StaticContextApplication.getAppContext();
+        // final Resources resources = context.getResources();
 
-	holder.titleText.setChecked(position == this.mSelectedPosition);
-	holder.titleText.setText(Html.fromHtml(item.getTitle()));
+        holder.titleText.setChecked(position == this.mSelectedPosition);
+        holder.titleText.setText(Html.fromHtml(item.getTitle()));
+        holder.titleText.setTextAppearance(context, item.getTextApperance());
 
-	//holder.titleText.setBackgroundResource(backgroundResource);
-	//holder.titleText.setTextColor(resources.getColorStateList(textColorResource));
+        // holder.titleText.setBackgroundResource(backgroundResource);
+        // holder.titleText.setTextColor(resources.getColorStateList(textColorResource));
     }
 
-    public synchronized void add(Menu section) {
-	this.mItems.add(section);
+    @Override
+    public boolean isEnabled(int position) {
+        return getItem(position) instanceof Menu;
     }
 
-    public synchronized void addAll(ArrayList<Menu> list) {
-	final ArrayList<Menu> items = this.mItems;
-	items.clear();
-	items.addAll(list);
+    public synchronized void add(AbstractMenu section) {
+        this.mItems.add(section);
+    }
 
-	notifyDataSetChanged();
+    public synchronized void addAll(ArrayList<AbstractMenu> list) {
+        final ArrayList<AbstractMenu> items = this.mItems;
+        items.clear();
+        items.addAll(list);
+
+        notifyDataSetChanged();
     }
 
     public void select(int position) {
-	this.mSelectedPosition = position;
+        this.mSelectedPosition = position;
     }
 
     public int getSelected() {
-	return this.mSelectedPosition;
+        return this.mSelectedPosition;
     }
 
     @Override
     public boolean areAllItemsEnabled() {
-	return true;
+        return true;
     }
 
     @SuppressWarnings("unchecked")
     public void restoreDataStateInstance(Bundle savedInstanceState, String key) {
-	if(savedInstanceState.containsKey(key)) {
-	    this.mItems = (ArrayList<Menu>) savedInstanceState.getSerializable(key);
-	}
-	
-	this.mSelectedPosition = savedInstanceState.getInt(STATE_SELECTION);
+        if (savedInstanceState.containsKey(key)) {
+            this.mItems = (ArrayList<AbstractMenu>) savedInstanceState.getSerializable(key);
+        }
+
+        this.mSelectedPosition = savedInstanceState.getInt(STATE_SELECTION);
     }
 
     public void saveDataStateInstance(Bundle outState, String key) {
-	outState.putSerializable(key, this.mItems);
-	outState.putInt(STATE_SELECTION, this.mSelectedPosition);
+        outState.putSerializable(key, this.mItems);
+        outState.putInt(STATE_SELECTION, this.mSelectedPosition);
     }
 
 }

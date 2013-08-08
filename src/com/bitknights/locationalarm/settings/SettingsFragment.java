@@ -1,3 +1,4 @@
+
 package com.bitknights.locationalarm.settings;
 
 import android.os.Bundle;
@@ -12,20 +13,21 @@ import com.bitknights.locationalarm.LaunchActivity;
 public class SettingsFragment extends BaseFragment {
 
     public static SettingsFragment instantiate(LaunchActivity activity, int position) {
-	SettingsFragment settingsFragment = new SettingsFragment();
-	return settingsFragment;
+        SettingsFragment settingsFragment = new SettingsFragment();
+        return settingsFragment;
     }
 
     public static String getFragmentTag() {
-	return SettingsFragment.class.getName();
+        return SettingsFragment.class.getName();
     }
 
     @Override
-    protected View getContentView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-	View contentView = inflater.inflate(R.layout.settings, null);
-	return contentView;
+    protected View getContentView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
+        View contentView = inflater.inflate(R.layout.settings, null);
+        return contentView;
     }
-    
+
     @Override
     public void onResume() {
         super.onResume();

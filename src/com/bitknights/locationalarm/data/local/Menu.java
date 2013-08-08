@@ -1,34 +1,22 @@
+
 package com.bitknights.locationalarm.data.local;
 
-public class Menu extends BaseEntity {
+import com.bitknights.locationalarm.R;
+
+public class Menu extends AbstractMenu {
 
     /**
      * 
      */
     private static final long serialVersionUID = -5988403164818767357L;
-    
-    private int mPosition;
-    private String mTitle;
-    
+
     public Menu(int position, String title) {
-	this.mPosition = position;
-	this.mTitle = title;
+        super(position, title);
     }
 
-    public int getPosition() {
-	return mPosition;
-    }
-    
-    public void setPosition(int position) {
-	this.mPosition = position;
-    }
-    
-    public String getTitle() {
-	return mTitle;
-    }
-    
-    public void setTitle(String title) {
-	this.mTitle = title;
+    @Override
+    public int getTextApperance() {
+        return R.style.TextAppearance_Menu_Text;
     }
 
 }

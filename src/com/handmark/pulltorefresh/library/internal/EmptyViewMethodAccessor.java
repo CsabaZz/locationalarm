@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
+
 package com.handmark.pulltorefresh.library.internal;
 
 import android.view.View;
@@ -28,8 +29,7 @@ public interface EmptyViewMethodAccessor {
     /**
      * Calls upto AdapterView.setEmptyView()
      * 
-     * @param emptyView
-     *            - to set as Empty View
+     * @param emptyView - to set as Empty View
      */
     public void setEmptyViewInternal(View emptyView);
 
@@ -37,8 +37,7 @@ public interface EmptyViewMethodAccessor {
      * Should call PullToRefreshBase.setEmptyView() which will then
      * automatically call through to setEmptyViewInternal()
      * 
-     * @param emptyView
-     *            - to set as Empty View
+     * @param emptyView - to set as Empty View
      */
     public void setEmptyView(View emptyView);
 

@@ -1,3 +1,4 @@
+
 package com.bitknights.locationalarm.data.local;
 
 import java.io.Serializable;

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
+
 package uk.co.senab.photoview;
 
 import android.annotation.TargetApi;
@@ -22,7 +23,7 @@ import android.view.View;
 public class SDK16 {
 
     public static void postOnAnimation(View view, Runnable r) {
-	view.postOnAnimation(r);
+        view.postOnAnimation(r);
     }
 
 }

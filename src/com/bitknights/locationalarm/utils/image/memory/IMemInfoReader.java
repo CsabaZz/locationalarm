@@ -1,3 +1,4 @@
+
 package com.bitknights.locationalarm.utils.image.memory;
 
 public interface IMemInfoReader {

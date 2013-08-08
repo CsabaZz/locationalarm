@@ -53,7 +53,7 @@ public abstract class ImageManager {
     public static final String IMAGE_SERVICE = "contactPhotos";
 
     public static interface NewUrlRequest {
-	String requestNewUrl(String oldUrl);
+        String requestNewUrl(String oldUrl);
     }
 
     /**
@@ -61,98 +61,101 @@ public abstract class ImageManager {
      * for the dark or light theme
      */
     protected static final class Request {
-	private String mId;
-	private String mUrl;
-	private final int mRequestedExtent;
-	private final DefaultImageProvider mDefaultProvider;
-	private final NewUrlRequest mNewUrlRequest;
+        private String mId;
+        private String mUrl;
+        private final int mRequestedExtent;
+        private final DefaultImageProvider mDefaultProvider;
+        private final NewUrlRequest mNewUrlRequest;
 
-	private Request(String id, String url, int requestedExtent, DefaultImageProvider defaultProvider,
-		NewUrlRequest newUrlRequest) {
-	    mId = id;
-	    mUrl = url;
-	    mRequestedExtent = requestedExtent;
-	    mDefaultProvider = defaultProvider;
-	    mNewUrlRequest = newUrlRequest;
-	}
+        private Request(String id, String url, int requestedExtent,
+                DefaultImageProvider defaultProvider,
+                NewUrlRequest newUrlRequest) {
+            mId = id;
+            mUrl = url;
+            mRequestedExtent = requestedExtent;
+            mDefaultProvider = defaultProvider;
+            mNewUrlRequest = newUrlRequest;
+        }
 
-	public String requestNewUrl(String oldUrl) {
-	    return null == mNewUrlRequest ? null : mNewUrlRequest.requestNewUrl(oldUrl);
-	}
+        public String requestNewUrl(String oldUrl) {
+            return null == mNewUrlRequest ? null : mNewUrlRequest.requestNewUrl(oldUrl);
+        }
 
-	public static Request createCopy(String url, int requestedExtent, DefaultImageProvider defaultProvider,
-		NewUrlRequest newUrlRequest) {
-	    return new Request(String.valueOf(url.hashCode()), url, requestedExtent, defaultProvider, newUrlRequest);
-	}
+        public static Request createCopy(String url, int requestedExtent,
+                DefaultImageProvider defaultProvider,
+                NewUrlRequest newUrlRequest) {
+            return new Request(String.valueOf(url.hashCode()), url, requestedExtent,
+                    defaultProvider, newUrlRequest);
+        }
 
-	public boolean isUrlRequest() {
-	    return mUrl != null;
-	}
+        public boolean isUrlRequest() {
+            return mUrl != null;
+        }
 
-	public String getUrl() {
-	    return mUrl;
-	}
+        public String getUrl() {
+            return mUrl;
+        }
 
-	public String getId() {
-	    return mId;
-	}
+        public String getId() {
+            return mId;
+        }
 
-	public int getRequestedExtent() {
-	    return mRequestedExtent;
-	}
+        public int getRequestedExtent() {
+            return mRequestedExtent;
+        }
 
-	public DefaultImageProvider getDefaultProvider() {
-	    return mDefaultProvider;
-	}
+        public DefaultImageProvider getDefaultProvider() {
+            return mDefaultProvider;
+        }
 
-	public NewUrlRequest getNewUrlRequest() {
-	    return mNewUrlRequest;
-	}
+        public NewUrlRequest getNewUrlRequest() {
+            return mNewUrlRequest;
+        }
 
-	@Override
-	public int hashCode() {
-	    final int prime = 31;
-	    int result = 1;
-	    result = prime * result + ((mId == null) ? 0 : mId.hashCode());
-	    result = prime * result + mRequestedExtent;
-	    result = prime * result + ((mUrl == null) ? 0 : mUrl.hashCode());
-	    return result;
-	}
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((mId == null) ? 0 : mId.hashCode());
+            result = prime * result + mRequestedExtent;
+            result = prime * result + ((mUrl == null) ? 0 : mUrl.hashCode());
+            return result;
+        }
 
-	@Override
-	public boolean equals(Object obj) {
-	    if (this == obj)
-		return true;
-	    if (obj == null)
-		return false;
-	    if (getClass() != obj.getClass())
-		return false;
-	    final Request that = (Request) obj;
-	    if (mId != that.mId)
-		return false;
-	    if (mRequestedExtent != that.mRequestedExtent)
-		return false;
-	    if (!mUrl.equals(that.mUrl))
-		return false;
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            final Request that = (Request) obj;
+            if (mId != that.mId)
+                return false;
+            if (mRequestedExtent != that.mRequestedExtent)
+                return false;
+            if (!mUrl.equals(that.mUrl))
+                return false;
 
-	    return true;
-	}
+            return true;
+        }
 
-	public Object getKey() {
-	    return mUrl == null ? mId : mUrl;
-	}
+        public Object getKey() {
+            return mUrl == null ? mId : mUrl;
+        }
 
-	public void applyDefaultImage(ImageView view) {
-	    mDefaultProvider.applyDefaultImage(view, mRequestedExtent);
-	}
+        public void applyDefaultImage(ImageView view) {
+            mDefaultProvider.applyDefaultImage(view, mRequestedExtent);
+        }
 
-	public boolean isDefaultDrawable(Drawable drawable) {
-	    return mDefaultProvider.isDefaultDrawable(drawable);
-	}
+        public boolean isDefaultDrawable(Drawable drawable) {
+            return mDefaultProvider.isDefaultDrawable(drawable);
+        }
 
-	public void changeUrlTo(String newUrl) {
-	    mUrl = newUrl;
-	}
+        public void changeUrlTo(String newUrl) {
+            mUrl = newUrl;
+        }
     }
 
     /**
@@ -161,67 +164,68 @@ public abstract class ImageManager {
      * thumbnail avatar is returned
      */
     public static int getDefaultAvatarResId(Context context, int extent) {
-	// TODO: Is it worth finding a nicer way to do hires/lores here?
-	if (s180DipInPixel == -1) {
-	    Resources r = context.getResources();
-	    s180DipInPixel = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 180, r.getDisplayMetrics());
-	}
+        // TODO: Is it worth finding a nicer way to do hires/lores here?
+        if (s180DipInPixel == -1) {
+            Resources r = context.getResources();
+            s180DipInPixel = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 180,
+                    r.getDisplayMetrics());
+        }
 
-	final boolean hires = (extent != -1) && (extent > s180DipInPixel);
-	return getDefaultAvatarResId(hires);
+        final boolean hires = (extent != -1) && (extent > s180DipInPixel);
+        return getDefaultAvatarResId(hires);
     }
 
     public static int getDefaultAvatarResId(boolean hires) {
-	return 0;
+        return 0;
     }
 
     public static abstract class DefaultImageProvider {
-	/**
-	 * Applies the default avatar to the ImageView. Extent is an indicator
-	 * for the size (width or height). If darkTheme is set, the avatar is
-	 * one that looks better on dark background
-	 */
-	public abstract void applyDefaultImage(ImageView view, int extent);
+        /**
+         * Applies the default avatar to the ImageView. Extent is an indicator
+         * for the size (width or height). If darkTheme is set, the avatar is
+         * one that looks better on dark background
+         */
+        public abstract void applyDefaultImage(ImageView view, int extent);
 
-	public abstract boolean isDefaultDrawable(Drawable drawable);
+        public abstract boolean isDefaultDrawable(Drawable drawable);
     }
 
     private static class BlankDefaultImageProvider extends DefaultImageProvider {
-	private static Drawable sDrawable;
+        private static Drawable sDrawable;
 
-	@Override
-	public void applyDefaultImage(ImageView view, int extent) {
-	    if (sDrawable == null) {
-		final int transparentColor = Color.TRANSPARENT;
-		sDrawable = new ColorDrawable(transparentColor);
-	    }
-	    view.setImageDrawable(sDrawable);
-	}
+        @Override
+        public void applyDefaultImage(ImageView view, int extent) {
+            if (sDrawable == null) {
+                final int transparentColor = Color.TRANSPARENT;
+                sDrawable = new ColorDrawable(transparentColor);
+            }
+            view.setImageDrawable(sDrawable);
+        }
 
-	@Override
-	public boolean isDefaultDrawable(Drawable drawable) {
-	    return sDrawable == drawable;
-	}
+        @Override
+        public boolean isDefaultDrawable(Drawable drawable) {
+            return sDrawable == drawable;
+        }
     }
 
     private static class BlackDefaultImageProvider extends DefaultImageProvider {
-	private static Drawable sDrawable;
+        private static Drawable sDrawable;
 
-	@Override
-	public void applyDefaultImage(ImageView view, int extent) {
-	    if (sDrawable == null) {
-		final Context context = view.getContext();
-		final Resources resources = context.getResources();
-		final int blackColor = resources.getColor(R.color.blackColor);
-		sDrawable = new ColorDrawable(blackColor);
-	    }
-	    view.setImageDrawable(sDrawable);
-	}
+        @Override
+        public void applyDefaultImage(ImageView view, int extent) {
+            if (sDrawable == null) {
+                final Context context = view.getContext();
+                final Resources resources = context.getResources();
+                final int blackColor = resources.getColor(R.color.blackColor);
+                sDrawable = new ColorDrawable(blackColor);
+            }
+            view.setImageDrawable(sDrawable);
+        }
 
-	@Override
-	public boolean isDefaultDrawable(Drawable drawable) {
-	    return sDrawable == drawable;
-	}
+        @Override
+        public boolean isDefaultDrawable(Drawable drawable) {
+            return sDrawable == drawable;
+        }
     }
 
     /*
@@ -229,27 +233,27 @@ public abstract class ImageManager {
      * reaches EOF.
      */
     static class FlushedInputStream extends FilterInputStream {
-	public FlushedInputStream(InputStream inputStream) {
-	    super(inputStream);
-	}
+        public FlushedInputStream(InputStream inputStream) {
+            super(inputStream);
+        }
 
-	@Override
-	public long skip(long n) throws IOException {
-	    long totalBytesSkipped = 0L;
-	    while (totalBytesSkipped < n) {
-		long bytesSkipped = in.skip(n - totalBytesSkipped);
-		if (bytesSkipped == 0L) {
-		    int b = read();
-		    if (b < 0) {
-			break; // we reached EOF
-		    } else {
-			bytesSkipped = 1; // we read one byte
-		    }
-		}
-		totalBytesSkipped += bytesSkipped;
-	    }
-	    return totalBytesSkipped;
-	}
+        @Override
+        public long skip(long n) throws IOException {
+            long totalBytesSkipped = 0L;
+            while (totalBytesSkipped < n) {
+                long bytesSkipped = in.skip(n - totalBytesSkipped);
+                if (bytesSkipped == 0L) {
+                    int b = read();
+                    if (b < 0) {
+                        break; // we reached EOF
+                    } else {
+                        bytesSkipped = 1; // we read one byte
+                    }
+                }
+                totalBytesSkipped += bytesSkipped;
+            }
+            return totalBytesSkipped;
+        }
     }
 
     public static final DefaultImageProvider DEFAULT_BLANK = new BlankDefaultImageProvider();
@@ -257,42 +261,42 @@ public abstract class ImageManager {
     public static final DefaultImageProvider DEFAULT_BLACK = new BlackDefaultImageProvider();
 
     public static synchronized ImageManager createImageManager() {
-	if (android.os.Build.VERSION.SDK_INT < 14) {
-	    return SDK1.createImageManager();
-	} else {
-	    return SDK14.createImageManager();
-	}
+        if (android.os.Build.VERSION.SDK_INT < 14) {
+            return SDK1.createImageManager();
+        } else {
+            return SDK14.createImageManager();
+        }
     }
 
     @TargetApi(1)
     static class SDK1 {
-	public static ImageManager createImageManager() {
-	    return new ImageDownloader();
-	}
+        public static ImageManager createImageManager() {
+            return new ImageDownloader();
+        }
     }
 
     @TargetApi(14)
     static class SDK14 {
-	public static ImageManager createImageManager() {
-	    return new ImageManager14();
-	}
+        public static ImageManager createImageManager() {
+            return new ImageManager14();
+        }
     }
 
     public static void clearDiscCache() {
-	final Context context = StaticContextApplication.getAppContext();
-	File dir = null == context ? null : context.getFilesDir();
+        final Context context = StaticContextApplication.getAppContext();
+        File dir = null == context ? null : context.getFilesDir();
 
-	if (null != dir && dir.exists()) {
-	    File[] files = dir.listFiles();
+        if (null != dir && dir.exists()) {
+            File[] files = dir.listFiles();
 
-	    if (files != null) {
-		for (File f : files) {
-		    if (f != null && f.getName().endsWith("_img")) {
-			f.delete();
-		    }
-		}
-	    }
-	}
+            if (files != null) {
+                for (File f : files) {
+                    if (f != null && f.getName().endsWith("_img")) {
+                        f.delete();
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -300,31 +304,26 @@ public abstract class ImageManager {
      * it is displayed immediately. Otherwise a request is sent to load the
      * photo from the location specified by the URI.
      * 
-     * @param view
-     *            The target view
-     * @param photoUri
-     *            The uri of the photo to load
-     * @param requestedExtent
-     *            Specifies an approximate Max(width, height) of the targetView.
-     *            This is useful if the source image can be a lot bigger that
-     *            the target, so that the decoding is done using efficient
-     *            sampling. If requestedExtent is specified, no sampling of the
-     *            image is performed
-     * @param darkTheme
-     *            Whether the background is dark. This is used for default
+     * @param view The target view
+     * @param photoUri The uri of the photo to load
+     * @param requestedExtent Specifies an approximate Max(width, height) of the
+     *            targetView. This is useful if the source image can be a lot
+     *            bigger that the target, so that the decoding is done using
+     *            efficient sampling. If requestedExtent is specified, no
+     *            sampling of the image is performed
+     * @param darkTheme Whether the background is dark. This is used for default
      *            avatars
-     * @param defaultProvider
-     *            The provider of default avatars (this is used if photoUri
-     *            doesn't refer to an existing image)
+     * @param defaultProvider The provider of default avatars (this is used if
+     *            photoUri doesn't refer to an existing image)
      */
     public abstract void loadImageByUrl(ImageView view, String photoUrl, int requestedExtent,
-	    DefaultImageProvider defaultProvider, NewUrlRequest newUrlRequest);
+            DefaultImageProvider defaultProvider, NewUrlRequest newUrlRequest);
 
     /**
      * Calls {@link #loadImageByUrl(ImageView, String, boolean, NewUrlRequest)}.
      */
     public final void loadImageByUrl(ImageView view, String photoUrl, NewUrlRequest newUrlRequest) {
-	loadImageByUrl(view, photoUrl, -1, DEFAULT_BLACK, newUrlRequest);
+        loadImageByUrl(view, photoUrl, -1, DEFAULT_BLACK, newUrlRequest);
     }
 
     /**
@@ -332,8 +331,9 @@ public abstract class ImageManager {
      * {@link #loadImageByUrl(ImageView, String, boolean, DefaultImageProvider)}
      * with {@link #DEFAULT_AVATAR}.
      */
-    public final void loadImageByUrl(ImageView view, String photoUrl, DefaultImageProvider defaultProvider) {
-	loadImageByUrl(view, photoUrl, -1, defaultProvider, null);
+    public final void loadImageByUrl(ImageView view, String photoUrl,
+            DefaultImageProvider defaultProvider) {
+        loadImageByUrl(view, photoUrl, -1, defaultProvider, null);
     }
 
     /**
@@ -343,7 +343,7 @@ public abstract class ImageManager {
      * thumbnail
      */
     public final void loadImageByUrl(ImageView view, String photoUrl) {
-	loadImageByUrl(view, photoUrl, -1, DEFAULT_BLACK, null);
+        loadImageByUrl(view, photoUrl, -1, DEFAULT_BLACK, null);
     }
 
     /**
@@ -365,12 +365,9 @@ public abstract class ImageManager {
     /**
      * Stores the given bitmap directly in the LRU bitmap cache.
      * 
-     * @param originalRequest
-     *            The URI of the photo (for future requests).
-     * @param bitmap
-     *            The bitmap.
-     * @param photoBytes
-     *            The bytes that were parsed to create the bitmap.
+     * @param originalRequest The URI of the photo (for future requests).
+     * @param bitmap The bitmap.
+     * @param photoBytes The bytes that were parsed to create the bitmap.
      */
     public abstract void cacheBitmap(Request originalRequest, Bitmap bitmap, byte[] photoBytes);
 

@@ -1,3 +1,4 @@
+
 package com.bitknights.locationalarm.view;
 
 import android.content.Context;
@@ -7,24 +8,24 @@ import android.widget.RelativeLayout;
 public class AnimationRelativeLayout extends RelativeLayout {
 
     public AnimationRelativeLayout(Context context) {
-	super(context);
+        super(context);
     }
 
     public AnimationRelativeLayout(Context context, AttributeSet attrs) {
-	super(context, attrs);
+        super(context, attrs);
     }
 
     public AnimationRelativeLayout(Context context, AttributeSet attrs, int defStyle) {
-	super(context, attrs, defStyle);
+        super(context, attrs, defStyle);
     }
-    
+
     public float getXFraction() {
         final int width = getWidth();
-	if(width == 0) {
-	    return 0;
-	} else {
-	    return getX() / getWidth();
-	}
+        if (width == 0) {
+            return 0;
+        } else {
+            return getX() / getWidth();
+        }
     }
 
     public void setXFraction(float xFraction) {

@@ -34,88 +34,86 @@ public class BitmapUtil {
      * to run.
      */
     public static int getSmallerExtentFromBytes(byte[] bytes) {
-	final BitmapFactory.Options options = new BitmapFactory.Options();
+        final BitmapFactory.Options options = new BitmapFactory.Options();
 
-	// don't actually decode the picture, just return its bounds
-	options.inJustDecodeBounds = true;
-	BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
+        // don't actually decode the picture, just return its bounds
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
 
-	// test what the best sample size is
-	return Math.min(options.outWidth, options.outHeight);
+        // test what the best sample size is
+        return Math.min(options.outWidth, options.outHeight);
     }
 
     /**
      * Finds the optimal sampleSize for loading the picture
      * 
-     * @param originalSmallerExtent
-     *            Width or height of the picture, whichever is smaller
-     * @param targetExtent
-     *            Width or height of the target view, whichever is bigger.
-     * 
-     *            If either one of the parameters is 0 or smaller, no sampling
-     *            is applied
+     * @param originalSmallerExtent Width or height of the picture, whichever is
+     *            smaller
+     * @param targetExtent Width or height of the target view, whichever is
+     *            bigger. If either one of the parameters is 0 or smaller, no
+     *            sampling is applied
      */
     public static int findOptimalSampleSize(int originalSmallerExtent, int targetExtent) {
-	// If we don't know sizes, we can't do sampling.
-	if (targetExtent < 1)
-	    return 1;
-	if (originalSmallerExtent < 1)
-	    return 1;
+        // If we don't know sizes, we can't do sampling.
+        if (targetExtent < 1)
+            return 1;
+        if (originalSmallerExtent < 1)
+            return 1;
 
-	// Test what the best sample size is. To do that, we find the sample
-	// size that gives us
-	// the best trade-off between resulting image size and memory
-	// requirement. We allow
-	// the down-sampled image to be 20% smaller than the target size. That
-	// way we can get around
-	// unfortunate cases where e.g. a 720 picture is requested for 362 and
-	// not down-sampled at
-	// all. Why 20%? Why not. Prove me wrong.
-	int extent = originalSmallerExtent;
-	int sampleSize = 1;
-	while ((extent >> 1) >= targetExtent * 0.8f) {
-	    sampleSize <<= 1;
-	    extent >>= 1;
-	}
+        // Test what the best sample size is. To do that, we find the sample
+        // size that gives us
+        // the best trade-off between resulting image size and memory
+        // requirement. We allow
+        // the down-sampled image to be 20% smaller than the target size. That
+        // way we can get around
+        // unfortunate cases where e.g. a 720 picture is requested for 362 and
+        // not down-sampled at
+        // all. Why 20%? Why not. Prove me wrong.
+        int extent = originalSmallerExtent;
+        int sampleSize = 1;
+        while ((extent >> 1) >= targetExtent * 0.8f) {
+            sampleSize <<= 1;
+            extent >>= 1;
+        }
 
-	return sampleSize;
+        return sampleSize;
     }
 
     /**
      * Decodes the bitmap with the given sample size
      */
     public static Bitmap decodeBitmapFromBytes(byte[] bytes, int sampleSize) {
-	final BitmapFactory.Options options = new BitmapFactory.Options();
-	options.inPreferredConfig = Config.RGB_565;
-	options.inPurgeable = true;
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Config.RGB_565;
+        options.inPurgeable = true;
 
-	if (sampleSize > 1) {
-	    options.inSampleSize = sampleSize;
-	}
+        if (sampleSize > 1) {
+            options.inSampleSize = sampleSize;
+        }
 
-	return BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
+        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
     }
 
     public static int getByteCount(Bitmap bitmap) {
-	if (android.os.Build.VERSION.SDK_INT < 12) {
-	    return GetByteCountApi1.getByteCount(bitmap);
-	} else {
-	    return GetByteCountApi12.getByteCount(bitmap);
-	}
+        if (android.os.Build.VERSION.SDK_INT < 12) {
+            return GetByteCountApi1.getByteCount(bitmap);
+        } else {
+            return GetByteCountApi12.getByteCount(bitmap);
+        }
     }
 
     @TargetApi(1)
     static class GetByteCountApi1 {
-	public static int getByteCount(Bitmap bitmap) {
-	    return bitmap.getRowBytes() * bitmap.getHeight();
-	}
+        public static int getByteCount(Bitmap bitmap) {
+            return bitmap.getRowBytes() * bitmap.getHeight();
+        }
     }
 
     @TargetApi(12)
     static class GetByteCountApi12 {
-	public static int getByteCount(Bitmap bitmap) {
-	    return bitmap.getByteCount();
-	}
+        public static int getByteCount(Bitmap bitmap) {
+            return bitmap.getByteCount();
+        }
     }
 
 }

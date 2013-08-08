@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
+
 package com.handmark.pulltorefresh.library.internal;
 
 import android.content.Context;
@@ -38,73 +39,76 @@ public class RotateLoadingLayout extends LoadingLayout {
 
     private final boolean mRotateDrawableWhilePulling;
 
-    public RotateLoadingLayout(Context context, Mode mode, Orientation scrollDirection, TypedArray attrs) {
-	super(context, mode, scrollDirection, attrs);
+    public RotateLoadingLayout(Context context, Mode mode, Orientation scrollDirection,
+            TypedArray attrs) {
+        super(context, mode, scrollDirection, attrs);
 
-	mRotateDrawableWhilePulling = attrs.getBoolean(R.styleable.PullToRefresh_ptrRotateDrawableWhilePulling, true);
+        mRotateDrawableWhilePulling = attrs.getBoolean(
+                R.styleable.PullToRefresh_ptrRotateDrawableWhilePulling, true);
 
-	mHeaderImage.setScaleType(ScaleType.MATRIX);
-	mHeaderImageMatrix = new Matrix();
-	mHeaderImage.setImageMatrix(mHeaderImageMatrix);
+        mHeaderImage.setScaleType(ScaleType.MATRIX);
+        mHeaderImageMatrix = new Matrix();
+        mHeaderImage.setImageMatrix(mHeaderImageMatrix);
 
-	mRotateAnimation = new RotateAnimation(0, 720, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
-		0.5f);
-	mRotateAnimation.setInterpolator(ANIMATION_INTERPOLATOR);
-	mRotateAnimation.setDuration(ROTATION_ANIMATION_DURATION);
-	mRotateAnimation.setRepeatCount(Animation.INFINITE);
-	mRotateAnimation.setRepeatMode(Animation.RESTART);
+        mRotateAnimation = new RotateAnimation(0, 720, Animation.RELATIVE_TO_SELF, 0.5f,
+                Animation.RELATIVE_TO_SELF,
+                0.5f);
+        mRotateAnimation.setInterpolator(ANIMATION_INTERPOLATOR);
+        mRotateAnimation.setDuration(ROTATION_ANIMATION_DURATION);
+        mRotateAnimation.setRepeatCount(Animation.INFINITE);
+        mRotateAnimation.setRepeatMode(Animation.RESTART);
     }
 
     public void onLoadingDrawableSet(Drawable imageDrawable) {
-	if (null != imageDrawable) {
-	    mRotationPivotX = Math.round(imageDrawable.getIntrinsicWidth() / 2f);
-	    mRotationPivotY = Math.round(imageDrawable.getIntrinsicHeight() / 2f);
-	}
+        if (null != imageDrawable) {
+            mRotationPivotX = Math.round(imageDrawable.getIntrinsicWidth() / 2f);
+            mRotationPivotY = Math.round(imageDrawable.getIntrinsicHeight() / 2f);
+        }
     }
 
     protected void onPullImpl(float scaleOfLayout) {
-	float angle;
-	if (mRotateDrawableWhilePulling) {
-	    angle = scaleOfLayout * 90f;
-	} else {
-	    angle = Math.max(0f, Math.min(180f, scaleOfLayout * 360f - 180f));
-	}
+        float angle;
+        if (mRotateDrawableWhilePulling) {
+            angle = scaleOfLayout * 90f;
+        } else {
+            angle = Math.max(0f, Math.min(180f, scaleOfLayout * 360f - 180f));
+        }
 
-	mHeaderImageMatrix.setRotate(angle, mRotationPivotX, mRotationPivotY);
-	mHeaderImage.setImageMatrix(mHeaderImageMatrix);
+        mHeaderImageMatrix.setRotate(angle, mRotationPivotX, mRotationPivotY);
+        mHeaderImage.setImageMatrix(mHeaderImageMatrix);
     }
 
     @Override
     protected void refreshingImpl() {
-	mHeaderImage.startAnimation(mRotateAnimation);
+        mHeaderImage.startAnimation(mRotateAnimation);
     }
 
     @Override
     protected void resetImpl() {
-	mHeaderImage.clearAnimation();
-	resetImageRotation();
+        mHeaderImage.clearAnimation();
+        resetImageRotation();
     }
 
     private void resetImageRotation() {
-	if (null != mHeaderImageMatrix) {
-	    mHeaderImageMatrix.reset();
-	    mHeaderImage.setImageMatrix(mHeaderImageMatrix);
-	}
+        if (null != mHeaderImageMatrix) {
+            mHeaderImageMatrix.reset();
+            mHeaderImage.setImageMatrix(mHeaderImageMatrix);
+        }
     }
 
     @Override
     protected void pullToRefreshImpl() {
-	// NO-OP
+        // NO-OP
     }
 
     @Override
     protected void releaseToRefreshImpl() {
-	// NO-OP
+        // NO-OP
     }
 
     @Override
     protected int getDefaultDrawableResId() {
-	return R.drawable.default_ptr_rotate;
+        return R.drawable.default_ptr_rotate;
     }
 
 }

@@ -26,16 +26,16 @@ public final class MemoryUtils {
     private static long sTotalMemorySize = -1;
 
     public static long getTotalMemorySize() {
-	if (sTotalMemorySize < 0) {
-	    IMemInfoReader reader = MemInfoReader.getInstance();
-	    reader.readMemInfo();
+        if (sTotalMemorySize < 0) {
+            IMemInfoReader reader = MemInfoReader.getInstance();
+            reader.readMemInfo();
 
-	    // getTotalSize() returns the "MemTotal" value from /proc/meminfo.
-	    // Because the linux kernel doesn't see all the RAM on the system
-	    // (e.g. GPU takes some),
-	    // this is usually smaller than the actual RAM size.
-	    sTotalMemorySize = reader.getTotalSize(); // Runtime.getRuntime().totalMemory()
-	}
-	return sTotalMemorySize;
+            // getTotalSize() returns the "MemTotal" value from /proc/meminfo.
+            // Because the linux kernel doesn't see all the RAM on the system
+            // (e.g. GPU takes some),
+            // this is usually smaller than the actual RAM size.
+            sTotalMemorySize = reader.getTotalSize(); // Runtime.getRuntime().totalMemory()
+        }
+        return sTotalMemorySize;
     }
 }

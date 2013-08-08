@@ -21,12 +21,12 @@ public class MemInfoReader {
     private static IMemInfoReader mInstance;
 
     public static IMemInfoReader getInstance() {
-	if (android.os.Build.VERSION.SDK_INT > 8) {
-	    mInstance = new MemInfoReader_API9();
-	} else {
-	    mInstance = new MemInfoReader_API1();
-	}
+        if (android.os.Build.VERSION.SDK_INT > 8) {
+            mInstance = new MemInfoReader_API9();
+        } else {
+            mInstance = new MemInfoReader_API1();
+        }
 
-	return mInstance;
+        return mInstance;
     }
 }

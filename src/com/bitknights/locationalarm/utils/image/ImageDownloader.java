@@ -60,12 +60,10 @@ import com.bitknights.locationalarm.utils.Utils;
 /**
  * This helper class download images from the Internet and binds those with the
  * provided ImageView.
- * 
  * <p>
  * It requires the INTERNET permission, which should be added to your
  * application's manifest file.
  * </p>
- * 
  * A local cache of downloaded images is maintained internally to improve
  * performance.
  */
@@ -77,128 +75,128 @@ public class ImageDownloader extends ImageManager {
      * The actual AsyncTask that will asynchronously download the image.
      */
     class BitmapDownloaderTask extends AsyncTask<String[], Void, BitmapDrawable> {
-	private String url;
-	private String filename;
-	private final WeakReference<ImageView> imageViewReference;
+        private String url;
+        private String filename;
+        private final WeakReference<ImageView> imageViewReference;
 
-	public BitmapDownloaderTask(ImageView imageView) {
-	    imageViewReference = new WeakReference<ImageView>(imageView);
-	}
+        public BitmapDownloaderTask(ImageView imageView) {
+            imageViewReference = new WeakReference<ImageView>(imageView);
+        }
 
-	/**
-	 * Actual download method.
-	 */
-	@Override
-	protected BitmapDrawable doInBackground(String[]... params) {
-	    final Context context = StaticContextApplication.getAppContext();
+        /**
+         * Actual download method.
+         */
+        @Override
+        protected BitmapDrawable doInBackground(String[]... params) {
+            final Context context = StaticContextApplication.getAppContext();
 
-	    String[] data = params[0];
-	    Bitmap bmp = null;
+            String[] data = params[0];
+            Bitmap bmp = null;
 
-	    try {
-		if (data.length > 0) {
-		    url = data[0];
-		}
+            try {
+                if (data.length > 0) {
+                    url = data[0];
+                }
 
-		if (data.length > 1) {
-		    filename = data[1];
-		}
+                if (data.length > 1) {
+                    filename = data[1];
+                }
 
-		if (isCancelled()) {
-		    return null;
-		}
+                if (isCancelled()) {
+                    return null;
+                }
 
-		bmp = loadFromDisk(url);
+                bmp = loadFromDisk(url);
 
-		if (bmp != null) {
-		    bmp.setDensity(0);
-		    return new BitmapDrawable(context.getResources(), bmp);
-		}
+                if (bmp != null) {
+                    bmp.setDensity(0);
+                    return new BitmapDrawable(context.getResources(), bmp);
+                }
 
-		if (isCancelled()) {
-		    return new BitmapDrawable(context.getResources(), bmp);
-		}
+                if (isCancelled()) {
+                    return new BitmapDrawable(context.getResources(), bmp);
+                }
 
-		bmp = downloadBitmap(url);
+                bmp = downloadBitmap(url);
 
-		if (bmp != null) {
-		    bmp.setDensity(0);
+                if (bmp != null) {
+                    bmp.setDensity(0);
 
-		    if (filename != null) {
-			ImageUtils.cacheImage(bmp, filename);
-		    }
+                    if (filename != null) {
+                        ImageUtils.cacheImage(bmp, filename);
+                    }
 
-		    return new BitmapDrawable(context.getResources(), bmp);
-		} else {
-		    if (isCancelled()) {
-			return new BitmapDrawable(context.getResources(), bmp);
-		    }
+                    return new BitmapDrawable(context.getResources(), bmp);
+                } else {
+                    if (isCancelled()) {
+                        return new BitmapDrawable(context.getResources(), bmp);
+                    }
 
-		    if (Utils.isOnline()) {
-			return new BitmapDrawable(context.getResources(), BitmapFactory.decodeResource(
-				context.getResources(), stubId, opt));
-		    }
+                    if (Utils.isOnline()) {
+                        return new BitmapDrawable(context.getResources(),
+                                BitmapFactory.decodeResource(
+                                        context.getResources(), stubId, opt));
+                    }
 
-		    if (filename == null) {
-			filename = String.valueOf(url.hashCode());
-		    }
+                    if (filename == null) {
+                        filename = String.valueOf(url.hashCode());
+                    }
 
-		    bmp = loadFromCache(filename);
+                    bmp = loadFromCache(filename);
 
-		    if (bmp != null) {
-			bmp.setDensity(0);
-		    }
+                    if (bmp != null) {
+                        bmp.setDensity(0);
+                    }
 
-		    return new BitmapDrawable(context.getResources(), bmp);
-		}
-	    } catch (Error e) {
-		synchronized (sHardBitmapCache) {
-		    Set<String> keys = sHardBitmapCache.keySet();
-		    for (String key : keys) {
-			CacheItem item = sHardBitmapCache.get(key);
-			Log.e("", item != null ? item.toString() : "NULL ITEM?!");
-		    }
-		    Log.e(Utils.TAG + "ImageDownloader", "Can not fetch the image", e);
-		}
+                    return new BitmapDrawable(context.getResources(), bmp);
+                }
+            } catch (Error e) {
+                synchronized (sHardBitmapCache) {
+                    Set<String> keys = sHardBitmapCache.keySet();
+                    for (String key : keys) {
+                        CacheItem item = sHardBitmapCache.get(key);
+                        Log.e("", item != null ? item.toString() : "NULL ITEM?!");
+                    }
+                    Log.e(Utils.TAG + "ImageDownloader", "Can not fetch the image", e);
+                }
 
-		return null;
-	    }
-	}
+                return null;
+            }
+        }
 
-	/**
-	 * Once the image is downloaded, associates it to the imageView
-	 */
-	@Override
-	protected void onPostExecute(BitmapDrawable bitmap) {
-	    if (isCancelled() || bitmap == null) {
-		if (bitmap != null && bitmap.getBitmap() != null) {
-		    bitmap.getBitmap().recycle();
-		}
+        /**
+         * Once the image is downloaded, associates it to the imageView
+         */
+        @Override
+        protected void onPostExecute(BitmapDrawable bitmap) {
+            if (isCancelled() || bitmap == null) {
+                if (bitmap != null && bitmap.getBitmap() != null) {
+                    bitmap.getBitmap().recycle();
+                }
 
-		bitmap = null;
-		return;
-	    }
+                bitmap = null;
+                return;
+            }
 
-	    addBitmapToCache(url, bitmap);
+            addBitmapToCache(url, bitmap);
 
-	    if (imageViewReference != null) {
-		ImageView imageView = imageViewReference.get();
-		BitmapDownloaderTask bitmapDownloaderTask = getBitmapDownloaderTask(imageView);
-		// Change bitmap only if this process is still associated with
-		// it
-		// Or if we don't use any bitmap to task association
-		// (NO_DOWNLOADED_DRAWABLE mode)
-		if ((this == bitmapDownloaderTask) /* || (mode != Mode.CORRECT) */) {
-		    setImageIntoView(imageView, bitmap);
-		}
-	    }
-	}
+            if (imageViewReference != null) {
+                ImageView imageView = imageViewReference.get();
+                BitmapDownloaderTask bitmapDownloaderTask = getBitmapDownloaderTask(imageView);
+                // Change bitmap only if this process is still associated with
+                // it
+                // Or if we don't use any bitmap to task association
+                // (NO_DOWNLOADED_DRAWABLE mode)
+                if ((this == bitmapDownloaderTask) /* || (mode != Mode.CORRECT) */) {
+                    setImageIntoView(imageView, bitmap);
+                }
+            }
+        }
     }
 
     /**
      * A fake Drawable that will be attached to the imageView while the download
      * is in progress.
-     * 
      * <p>
      * Contains a reference to the actual download task, so that a download task
      * can be stopped if a new binding is required, and makes sure that only the
@@ -207,65 +205,69 @@ public class ImageDownloader extends ImageManager {
      * </p>
      */
     static class DownloadedDrawable extends LayerDrawable {
-	private final WeakReference<BitmapDownloaderTask> bitmapDownloaderTaskReference;
+        private final WeakReference<BitmapDownloaderTask> bitmapDownloaderTaskReference;
 
-	public DownloadedDrawable(Context context, BitmapDownloaderTask bitmapDownloaderTask, int stubId) {
-	    super(new Drawable[] { stubId == 0 ? new ColorDrawable(Color.TRANSPARENT) : context.getResources()
-		    .getDrawable(stubId) });
-	    bitmapDownloaderTaskReference = new WeakReference<BitmapDownloaderTask>(bitmapDownloaderTask);
-	}
+        public DownloadedDrawable(Context context, BitmapDownloaderTask bitmapDownloaderTask,
+                int stubId) {
+            super(new Drawable[] {
+                stubId == 0 ? new ColorDrawable(Color.TRANSPARENT) : context.getResources()
+                        .getDrawable(stubId)
+            });
+            bitmapDownloaderTaskReference = new WeakReference<BitmapDownloaderTask>(
+                    bitmapDownloaderTask);
+        }
 
-	public BitmapDownloaderTask getBitmapDownloaderTask() {
-	    return bitmapDownloaderTaskReference.get();
-	}
+        public BitmapDownloaderTask getBitmapDownloaderTask() {
+            return bitmapDownloaderTaskReference.get();
+        }
     }
 
     private static class MutableInt {
-	private int value;
+        private int value;
 
-	public MutableInt(int defValue) {
-	    value = defValue;
-	}
+        public MutableInt(int defValue) {
+            value = defValue;
+        }
 
-	public int getValue() {
-	    return value;
-	}
+        public int getValue() {
+            return value;
+        }
 
-	public void increment() {
-	    this.value += 1;
-	}
+        public void increment() {
+            this.value += 1;
+        }
 
-	public void decrement() {
-	    this.value -= 1;
-	}
+        public void decrement() {
+            this.value -= 1;
+        }
     }
 
     private static class CacheItem {
-	private MutableInt refCount;
-	private Drawable drawable;
+        private MutableInt refCount;
+        private Drawable drawable;
 
-	public CacheItem(Drawable drawable) {
-	    this.drawable = drawable;
-	    this.refCount = new MutableInt(1);
-	}
+        public CacheItem(Drawable drawable) {
+            this.drawable = drawable;
+            this.refCount = new MutableInt(1);
+        }
 
-	@Override
-	public String toString() {
-	    if (drawable != null && ((BitmapDrawable) drawable).getBitmap() != null) {
-		return "Size: " + ((BitmapDrawable) drawable).getBitmap().getRowBytes()
-			* ((BitmapDrawable) drawable).getBitmap().getHeight() + " bytes; RefCount: "
-			+ refCount.getValue() + " [" + super.toString() + "]";
-	    } else {
-		return "Size: N/A (deleted?) bytes; RefCount: " + refCount.getValue() + " [" + super.toString() + "]";
-	    }
-	}
+        @Override
+        public String toString() {
+            if (drawable != null && ((BitmapDrawable) drawable).getBitmap() != null) {
+                return "Size: " + ((BitmapDrawable) drawable).getBitmap().getRowBytes()
+                        * ((BitmapDrawable) drawable).getBitmap().getHeight()
+                        + " bytes; RefCount: "
+                        + refCount.getValue() + " [" + super.toString() + "]";
+            } else {
+                return "Size: N/A (deleted?) bytes; RefCount: " + refCount.getValue() + " ["
+                        + super.toString() + "]";
+            }
+        }
     }
 
     /*
-     * Cache-related fields and methods.
-     * 
-     * We use a hard and a soft cache. A soft reference cache is too
-     * aggressively cleared by the Garbage Collector.
+     * Cache-related fields and methods. We use a hard and a soft cache. A soft
+     * reference cache is too aggressively cleared by the Garbage Collector.
      */
 
     private static final int HARD_CACHE_CAPACITY = 10;
@@ -273,34 +275,35 @@ public class ImageDownloader extends ImageManager {
 
     // Hard cache, with a fixed maximum capacity and a life duration
     private final static HashMap<String, CacheItem> sHardBitmapCache = new LinkedHashMap<String, CacheItem>(
-	    HARD_CACHE_CAPACITY / 2, 0.75f, true) {
-	/**
+            HARD_CACHE_CAPACITY / 2, 0.75f, true) {
+        /**
 			 * 
 			 */
-	private static final long serialVersionUID = 2648058302564915861L;
+        private static final long serialVersionUID = 2648058302564915861L;
 
-	@Override
-	protected boolean removeEldestEntry(LinkedHashMap.Entry<String, CacheItem> eldest) {
-	    if (size() > HARD_CACHE_CAPACITY) {
-		// Entries push-out of hard reference cache are transferred to
-		// soft reference cache
-		sSoftBitmapCache.put(eldest.getKey(), new SoftReference<CacheItem>(eldest.getValue()));
-		return true;
-	    } else
-		return false;
-	}
+        @Override
+        protected boolean removeEldestEntry(LinkedHashMap.Entry<String, CacheItem> eldest) {
+            if (size() > HARD_CACHE_CAPACITY) {
+                // Entries push-out of hard reference cache are transferred to
+                // soft reference cache
+                sSoftBitmapCache.put(eldest.getKey(),
+                        new SoftReference<CacheItem>(eldest.getValue()));
+                return true;
+            } else
+                return false;
+        }
     };
 
     // Soft cache for bitmaps kicked out of hard cache
     private final static ConcurrentHashMap<String, SoftReference<CacheItem>> sSoftBitmapCache = new ConcurrentHashMap<String, SoftReference<CacheItem>>(
-	    HARD_CACHE_CAPACITY / 2);
+            HARD_CACHE_CAPACITY / 2);
 
     private final Handler purgeHandler = new Handler();
 
     private final Runnable purger = new Runnable() {
-	public void run() {
-	    clearCache();
-	}
+        public void run() {
+            clearCache();
+        }
     };
 
     private ArrayList<String> keys;
@@ -312,45 +315,46 @@ public class ImageDownloader extends ImageManager {
     private static ImageDownloader mImageDownloader;
 
     public static ImageDownloader getInstance() {
-	if (mImageDownloader == null) {
-	    mImageDownloader = new ImageDownloader();
-	}
+        if (mImageDownloader == null) {
+            mImageDownloader = new ImageDownloader();
+        }
 
-	return mImageDownloader;
+        return mImageDownloader;
     }
 
     public ImageDownloader() {
-	keys = new ArrayList<String>();
+        keys = new ArrayList<String>();
 
-	opt = new BitmapFactory.Options();
-	opt.inDither = false;
-	// opt.inPurgeable = true;
-	opt.inPreferredConfig = Config.ARGB_8888;
+        opt = new BitmapFactory.Options();
+        opt.inDither = false;
+        // opt.inPurgeable = true;
+        opt.inPreferredConfig = Config.ARGB_8888;
 
-	this.stubId = 0;
+        this.stubId = 0;
     }
 
     private void matrixAction(ImageView imageView, Drawable drawable) {
-	final Context context = StaticContextApplication.getAppContext();
-	if (imageView.getScaleType() == ScaleType.MATRIX) {
-	    float scale = context.getResources().getDisplayMetrics().widthPixels / (float) drawable.getMinimumWidth();
+        final Context context = StaticContextApplication.getAppContext();
+        if (imageView.getScaleType() == ScaleType.MATRIX) {
+            float scale = context.getResources().getDisplayMetrics().widthPixels
+                    / (float) drawable.getMinimumWidth();
 
-	    Matrix m = new Matrix();
-	    m.setScale(scale, scale);
+            Matrix m = new Matrix();
+            m.setScale(scale, scale);
 
-	    LayoutParams lp = imageView.getLayoutParams();
+            LayoutParams lp = imageView.getLayoutParams();
 
-	    lp.width = (int) (drawable.getMinimumWidth() * scale);
-	    lp.height = (int) (drawable.getMinimumHeight() * scale);
+            lp.width = (int) (drawable.getMinimumWidth() * scale);
+            lp.height = (int) (drawable.getMinimumHeight() * scale);
 
-	    imageView.setImageMatrix(m);
-	    imageView.setLayoutParams(lp);
-	}
+            imageView.setImageMatrix(m);
+            imageView.setLayoutParams(lp);
+        }
     }
 
     public void setImageIntoView(ImageView imageView, Drawable drawable) {
-	matrixAction(imageView, drawable);
-	imageView.setImageDrawable(drawable);
+        matrixAction(imageView, drawable);
+        imageView.setImageDrawable(drawable);
     }
 
     /**
@@ -359,29 +363,27 @@ public class ImageDownloader extends ImageManager {
      * cache and will be done asynchronously otherwise. A null bitmap will be
      * associated to the ImageView if an error occurs.
      * 
-     * @param url
-     *            The URL of the image to download.
-     * @param imageView
-     *            The ImageView to bind the downloaded image to.
+     * @param url The URL of the image to download.
+     * @param imageView The ImageView to bind the downloaded image to.
      */
     public void download(String url, ImageView imageView) {
-	imageView.setImageResource(stubId);
+        imageView.setImageResource(stubId);
 
-	if (TextUtils.isEmpty(url)) {
-	    return;
-	}
+        if (TextUtils.isEmpty(url)) {
+            return;
+        }
 
-	String fixedUrl = url.replace("\\/", "/");
+        String fixedUrl = url.replace("\\/", "/");
 
-	resetPurgeTimer();
-	BitmapDrawable drawable = getBitmapFromCache(fixedUrl);
+        resetPurgeTimer();
+        BitmapDrawable drawable = getBitmapFromCache(fixedUrl);
 
-	if (drawable == null || drawable.getBitmap() == null) {
-	    forceDownload(fixedUrl, imageView);
-	} else {
-	    cancelPotentialDownload(fixedUrl, imageView);
-	    setImageIntoView(imageView, drawable);
-	}
+        if (drawable == null || drawable.getBitmap() == null) {
+            forceDownload(fixedUrl, imageView);
+        } else {
+            cancelPotentialDownload(fixedUrl, imageView);
+            setImageIntoView(imageView, drawable);
+        }
     }
 
     /**
@@ -390,27 +392,24 @@ public class ImageDownloader extends ImageManager {
      * cache and will be done asynchronously otherwise. A null bitmap will be
      * associated to the ImageView if an error occurs.
      * 
-     * @param url
-     *            The URL of the image to download.
-     * @param filename
-     *            The file name of the stored image on the disk.
-     * @param imageView
-     *            The ImageView to bind the downloaded image to.
+     * @param url The URL of the image to download.
+     * @param filename The file name of the stored image on the disk.
+     * @param imageView The ImageView to bind the downloaded image to.
      */
     public void download(String url, String filename, ImageView imageView) {
-	imageView.setImageResource(stubId);
+        imageView.setImageResource(stubId);
 
-	String fixedUrl = url.replace("\\/", "/");
+        String fixedUrl = url.replace("\\/", "/");
 
-	resetPurgeTimer();
-	BitmapDrawable drawable = getBitmapFromCache(fixedUrl);
+        resetPurgeTimer();
+        BitmapDrawable drawable = getBitmapFromCache(fixedUrl);
 
-	if (drawable == null || drawable.getBitmap() == null) {
-	    forceDownload(fixedUrl, filename, imageView);
-	} else {
-	    cancelPotentialDownload(fixedUrl, imageView);
-	    setImageIntoView(imageView, drawable);
-	}
+        if (drawable == null || drawable.getBitmap() == null) {
+            forceDownload(fixedUrl, filename, imageView);
+        } else {
+            cancelPotentialDownload(fixedUrl, imageView);
+            setImageIntoView(imageView, drawable);
+        }
     }
 
     /*
@@ -425,25 +424,27 @@ public class ImageDownloader extends ImageManager {
      * used. Kept private at the moment as its interest is not clear.
      */
     private void forceDownload(String url, ImageView imageView) {
-	final Context context = StaticContextApplication.getAppContext();
+        final Context context = StaticContextApplication.getAppContext();
 
-	// State sanity: url is guaranteed to never be null in
-	// DownloadedDrawable and cache keys.
-	if (url == null) {
-	    imageView.setImageDrawable(null);
-	    return;
-	}
+        // State sanity: url is guaranteed to never be null in
+        // DownloadedDrawable and cache keys.
+        if (url == null) {
+            imageView.setImageDrawable(null);
+            return;
+        }
 
-	// if (cancelPotentialDownload(url, imageView)) {
-	cancelPotentialDownload(url, imageView);
+        // if (cancelPotentialDownload(url, imageView)) {
+        cancelPotentialDownload(url, imageView);
 
-	BitmapDownloaderTask task = new BitmapDownloaderTask(imageView);
-	DownloadedDrawable downloadedDrawable = new DownloadedDrawable(context, task, stubId);
+        BitmapDownloaderTask task = new BitmapDownloaderTask(imageView);
+        DownloadedDrawable downloadedDrawable = new DownloadedDrawable(context, task, stubId);
 
-	setImageIntoView(imageView, downloadedDrawable);
-	imageView.setMinimumHeight(156);
-	task.execute(new String[] { url });
-	// }
+        setImageIntoView(imageView, downloadedDrawable);
+        imageView.setMinimumHeight(156);
+        task.execute(new String[] {
+            url
+        });
+        // }
     }
 
     /**
@@ -451,24 +452,26 @@ public class ImageDownloader extends ImageManager {
      * used. Kept private at the moment as its interest is not clear.
      */
     private void forceDownload(String url, String filename, ImageView imageView) {
-	final Context context = StaticContextApplication.getAppContext();
+        final Context context = StaticContextApplication.getAppContext();
 
-	// State sanity: url is guaranteed to never be null in
-	// DownloadedDrawable and cache keys.
-	if (url == null) {
-	    imageView.setImageDrawable(null);
-	    return;
-	}
+        // State sanity: url is guaranteed to never be null in
+        // DownloadedDrawable and cache keys.
+        if (url == null) {
+            imageView.setImageDrawable(null);
+            return;
+        }
 
-	// if (cancelPotentialDownload(url, imageView)) {
-	cancelPotentialDownload(url, imageView);
+        // if (cancelPotentialDownload(url, imageView)) {
+        cancelPotentialDownload(url, imageView);
 
-	BitmapDownloaderTask task = new BitmapDownloaderTask(imageView);
-	DownloadedDrawable downloadedDrawable = new DownloadedDrawable(context, task, stubId);
-	setImageIntoView(imageView, downloadedDrawable);
-	imageView.setMinimumHeight(156);
-	task.execute(new String[] { url, filename });
-	// }
+        BitmapDownloaderTask task = new BitmapDownloaderTask(imageView);
+        DownloadedDrawable downloadedDrawable = new DownloadedDrawable(context, task, stubId);
+        setImageIntoView(imageView, downloadedDrawable);
+        imageView.setMinimumHeight(156);
+        task.execute(new String[] {
+                url, filename
+        });
+        // }
     }
 
     /**
@@ -478,232 +481,241 @@ public class ImageDownloader extends ImageManager {
      * case.
      */
     public static boolean cancelPotentialDownload(String url, ImageView imageView) {
-	BitmapDownloaderTask bitmapDownloaderTask = getBitmapDownloaderTask(imageView);
+        BitmapDownloaderTask bitmapDownloaderTask = getBitmapDownloaderTask(imageView);
 
-	if (bitmapDownloaderTask != null) {
-	    String bitmapUrl = bitmapDownloaderTask.url;
-	    if ((bitmapUrl == null) || (!bitmapUrl.equals(url))) {
-		bitmapDownloaderTask.cancel(true);
-	    } else {
-		// Whether the same URL is already being downloaded to the same
-		// imageview
-		return bitmapDownloaderTask.imageViewReference != null
-			&& bitmapDownloaderTask.imageViewReference.get() != imageView;
-	    }
-	}
+        if (bitmapDownloaderTask != null) {
+            String bitmapUrl = bitmapDownloaderTask.url;
+            if ((bitmapUrl == null) || (!bitmapUrl.equals(url))) {
+                bitmapDownloaderTask.cancel(true);
+            } else {
+                // Whether the same URL is already being downloaded to the same
+                // imageview
+                return bitmapDownloaderTask.imageViewReference != null
+                        && bitmapDownloaderTask.imageViewReference.get() != imageView;
+            }
+        }
 
-	return true;
+        return true;
     }
 
     /**
-     * @param imageView
-     *            Any imageView
+     * @param imageView Any imageView
      * @return Retrieve the currently active download task (if any) associated
      *         with this imageView. null if there is no such task.
      */
     private static BitmapDownloaderTask getBitmapDownloaderTask(ImageView imageView) {
-	if (imageView != null) {
-	    Drawable drawable = imageView.getDrawable();
-	    if (drawable instanceof DownloadedDrawable) {
-		DownloadedDrawable downloadedDrawable = (DownloadedDrawable) drawable;
-		return downloadedDrawable.getBitmapDownloaderTask();
-	    }
-	}
-	return null;
+        if (imageView != null) {
+            Drawable drawable = imageView.getDrawable();
+            if (drawable instanceof DownloadedDrawable) {
+                DownloadedDrawable downloadedDrawable = (DownloadedDrawable) drawable;
+                return downloadedDrawable.getBitmapDownloaderTask();
+            }
+        }
+        return null;
     }
 
     private Bitmap downloadBitmap(String url) {
-	final HttpClient client = new DefaultHttpClient();
-	final HttpGet getRequest = new HttpGet(url);
+        final HttpClient client = new DefaultHttpClient();
+        final HttpGet getRequest = new HttpGet(url);
 
-	try {
-	    HttpResponse response = client.execute(getRequest);
-	    final int statusCode = response.getStatusLine().getStatusCode();
-	    if (statusCode != HttpStatus.SC_OK) {
-		throw new java.lang.UnsatisfiedLinkError("Error " + statusCode + " while retrieving bitmap from " + url);
-	    }
+        try {
+            HttpResponse response = client.execute(getRequest);
+            final int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode != HttpStatus.SC_OK) {
+                throw new java.lang.UnsatisfiedLinkError("Error " + statusCode
+                        + " while retrieving bitmap from " + url);
+            }
 
-	    final HttpEntity entity = response.getEntity();
-	    if (entity != null) {
-		InputStream inputStream = null;
-		Bitmap b = null;
-		try {
-		    inputStream = entity.getContent();
-		    // return BitmapFactory.decodeStream(inputStream);
-		    // Bug on slow connections, fixed in future release.
-		    b = BitmapFactory.decodeStream(new FlushedInputStream(inputStream), null, opt);
-		} catch (OutOfMemoryError e) {
-		    synchronized (sHardBitmapCache) {
-			Set<String> keys = sHardBitmapCache.keySet();
-			for (String key : keys) {
-			    CacheItem item = sHardBitmapCache.get(key);
-			    Log.e("", item != null ? item.toString() : "NULL ITEM?!");
-			}
-			Log.e(Utils.TAG + getClass().getSimpleName(), "Can not create a new bitmap", e);
-		    }
-		} finally {
-		    if (inputStream != null) {
-			inputStream.close();
-		    }
-		    entity.consumeContent();
-		}
+            final HttpEntity entity = response.getEntity();
+            if (entity != null) {
+                InputStream inputStream = null;
+                Bitmap b = null;
+                try {
+                    inputStream = entity.getContent();
+                    // return BitmapFactory.decodeStream(inputStream);
+                    // Bug on slow connections, fixed in future release.
+                    b = BitmapFactory.decodeStream(new FlushedInputStream(inputStream), null, opt);
+                } catch (OutOfMemoryError e) {
+                    synchronized (sHardBitmapCache) {
+                        Set<String> keys = sHardBitmapCache.keySet();
+                        for (String key : keys) {
+                            CacheItem item = sHardBitmapCache.get(key);
+                            Log.e("", item != null ? item.toString() : "NULL ITEM?!");
+                        }
+                        Log.e(Utils.TAG + getClass().getSimpleName(),
+                                "Can not create a new bitmap", e);
+                    }
+                } finally {
+                    if (inputStream != null) {
+                        inputStream.close();
+                    }
+                    entity.consumeContent();
+                }
 
-		if (b == null) {
-		    return null;
-		}
-		return saveToDisc(b, url);
-	    }
-	} catch (IOException e) {
-	    getRequest.abort();
-	    Log.w(Utils.TAG + getClass().getSimpleName(), "I/O error while retrieving bitmap from " + url, e);
-	} catch (IllegalStateException e) {
-	    getRequest.abort();
-	    Log.w(Utils.TAG + getClass().getSimpleName(), "Incorrect URL: " + url);
-	} catch (Exception e) {
-	    getRequest.abort();
-	    Log.w(Utils.TAG + getClass().getSimpleName(), "Error while retrieving bitmap from " + url, e);
-	} catch (Error e) {
-	    getRequest.abort();
-	    Log.w(Utils.TAG + getClass().getSimpleName(), "Error while retrieving bitmap from " + url, e);
-	}
+                if (b == null) {
+                    return null;
+                }
+                return saveToDisc(b, url);
+            }
+        } catch (IOException e) {
+            getRequest.abort();
+            Log.w(Utils.TAG + getClass().getSimpleName(), "I/O error while retrieving bitmap from "
+                    + url, e);
+        } catch (IllegalStateException e) {
+            getRequest.abort();
+            Log.w(Utils.TAG + getClass().getSimpleName(), "Incorrect URL: " + url);
+        } catch (Exception e) {
+            getRequest.abort();
+            Log.w(Utils.TAG + getClass().getSimpleName(), "Error while retrieving bitmap from "
+                    + url, e);
+        } catch (Error e) {
+            getRequest.abort();
+            Log.w(Utils.TAG + getClass().getSimpleName(), "Error while retrieving bitmap from "
+                    + url, e);
+        }
 
-	return null;
+        return null;
     }
 
     public Bitmap saveToDisc(Bitmap b, String url) throws Exception {
-	final Context context = StaticContextApplication.getAppContext();
+        final Context context = StaticContextApplication.getAppContext();
 
-	String filename = getFileNameFromUrl(url);
+        String filename = getFileNameFromUrl(url);
 
-	if (opt.outHeight < context.getResources().getDisplayMetrics().heightPixels
-		&& opt.outWidth < context.getResources().getDisplayMetrics().widthPixels) {
-	    b.compress(CompressFormat.PNG, 100, context.openFileOutput(filename, Context.MODE_PRIVATE));
-	    return b;
-	} else if (opt.outWidth < opt.outHeight) {
-	    Bitmap bmp = ImageUtils.getResizedBitmap(b,
-		    opt.outHeight > context.getResources().getDisplayMetrics().heightPixels ? context.getResources()
-			    .getDisplayMetrics().heightPixels : opt.outHeight);
+        if (opt.outHeight < context.getResources().getDisplayMetrics().heightPixels
+                && opt.outWidth < context.getResources().getDisplayMetrics().widthPixels) {
+            b.compress(CompressFormat.PNG, 100,
+                    context.openFileOutput(filename, Context.MODE_PRIVATE));
+            return b;
+        } else if (opt.outWidth < opt.outHeight) {
+            Bitmap bmp = ImageUtils
+                    .getResizedBitmap(
+                            b,
+                            opt.outHeight > context.getResources().getDisplayMetrics().heightPixels ? context
+                                    .getResources()
+                                    .getDisplayMetrics().heightPixels : opt.outHeight);
 
-	    if (b != null && bmp != b) {
-		b.recycle();
-		b = null;
-	    }
+            if (b != null && bmp != b) {
+                b.recycle();
+                b = null;
+            }
 
-	    if (bmp != null) {
-		bmp.compress(CompressFormat.PNG, 100, context.openFileOutput(filename, Context.MODE_PRIVATE));
-		return bmp;
-	    }
-	} else {
-	    Bitmap bmp = ImageUtils.getResizedBitmap(b,
-		    opt.outWidth > context.getResources().getDisplayMetrics().widthPixels ? context.getResources()
-			    .getDisplayMetrics().widthPixels : opt.outWidth);
+            if (bmp != null) {
+                bmp.compress(CompressFormat.PNG, 100,
+                        context.openFileOutput(filename, Context.MODE_PRIVATE));
+                return bmp;
+            }
+        } else {
+            Bitmap bmp = ImageUtils.getResizedBitmap(b,
+                    opt.outWidth > context.getResources().getDisplayMetrics().widthPixels ? context
+                            .getResources()
+                            .getDisplayMetrics().widthPixels : opt.outWidth);
 
-	    if (b != null && bmp != b) {
-		b.recycle();
-		b = null;
-	    }
+            if (b != null && bmp != b) {
+                b.recycle();
+                b = null;
+            }
 
-	    if (bmp != null) {
-		bmp.compress(CompressFormat.PNG, 100, context.openFileOutput(filename, Context.MODE_PRIVATE));
-		return bmp;
-	    }
-	}
-	return null;
+            if (bmp != null) {
+                bmp.compress(CompressFormat.PNG, 100,
+                        context.openFileOutput(filename, Context.MODE_PRIVATE));
+                return bmp;
+            }
+        }
+        return null;
     }
 
     /**
      * Adds this bitmap to the cache.
      * 
-     * @param bitmap
-     *            The newly downloaded bitmap.
+     * @param bitmap The newly downloaded bitmap.
      */
     private void addBitmapToCache(String url, BitmapDrawable bitmap) {
-	if (bitmap != null) {
-	    synchronized (sHardBitmapCache) {
-		if (sHardBitmapCache.containsKey(url)) {
-		    final CacheItem item = sHardBitmapCache.get(url);
+        if (bitmap != null) {
+            synchronized (sHardBitmapCache) {
+                if (sHardBitmapCache.containsKey(url)) {
+                    final CacheItem item = sHardBitmapCache.get(url);
 
-		    if (item != null && item.drawable != null) {
-			BitmapDrawable drawable = (BitmapDrawable) item.drawable;
-			if (drawable != null && drawable.getBitmap() != null) {
-			    // Bitmap found in hard cache
-			    // Move element to first position, so that it is
-			    // removed last
-			    sHardBitmapCache.remove(url);
+                    if (item != null && item.drawable != null) {
+                        BitmapDrawable drawable = (BitmapDrawable) item.drawable;
+                        if (drawable != null && drawable.getBitmap() != null) {
+                            // Bitmap found in hard cache
+                            // Move element to first position, so that it is
+                            // removed last
+                            sHardBitmapCache.remove(url);
 
-			    item.refCount.increment();
+                            item.refCount.increment();
 
-			    sHardBitmapCache.put(url, item);
-			}
-		    }
-		} else {
-		    keys.add(url);
-		    sHardBitmapCache.put(url, new CacheItem(bitmap));
-		}
-	    }
-	}
+                            sHardBitmapCache.put(url, item);
+                        }
+                    }
+                } else {
+                    keys.add(url);
+                    sHardBitmapCache.put(url, new CacheItem(bitmap));
+                }
+            }
+        }
     }
 
     /**
-     * @param url
-     *            The URL of the image that will be retrieved from the cache.
+     * @param url The URL of the image that will be retrieved from the cache.
      * @return The cached bitmap or null if it was not found.
      */
     public BitmapDrawable getBitmapFromCache(String url) {
-	if (url == null) {
-	    return null;
-	}
+        if (url == null) {
+            return null;
+        }
 
-	// First try the hard reference cache
-	synchronized (sHardBitmapCache) {
-	    final CacheItem item = sHardBitmapCache.get(url);
+        // First try the hard reference cache
+        synchronized (sHardBitmapCache) {
+            final CacheItem item = sHardBitmapCache.get(url);
 
-	    if (item != null && item.drawable != null) {
-		BitmapDrawable drawable = (BitmapDrawable) item.drawable;
-		if (drawable != null && drawable.getBitmap() != null) {
-		    // Bitmap found in hard cache
-		    // Move element to first position, so that it is removed
-		    // last
-		    sHardBitmapCache.remove(url);
+            if (item != null && item.drawable != null) {
+                BitmapDrawable drawable = (BitmapDrawable) item.drawable;
+                if (drawable != null && drawable.getBitmap() != null) {
+                    // Bitmap found in hard cache
+                    // Move element to first position, so that it is removed
+                    // last
+                    sHardBitmapCache.remove(url);
 
-		    item.refCount.increment();
+                    item.refCount.increment();
 
-		    sHardBitmapCache.put(url, item);
+                    sHardBitmapCache.put(url, item);
 
-		    return drawable;
-		}
-	    }
-	}
+                    return drawable;
+                }
+            }
+        }
 
-	// Then try the soft reference cache
-	SoftReference<CacheItem> bitmapReference = sSoftBitmapCache.get(url);
-	if (bitmapReference != null) {
-	    CacheItem item = bitmapReference.get();
-	    if (item != null && item.drawable != null) {
-		BitmapDrawable drawable = (BitmapDrawable) item.drawable;
-		if (drawable != null && drawable.getBitmap() != null) {
-		    final Bitmap bitmap = drawable.getBitmap();
-		    if (bitmap != null) {
-			// Bitmap found in soft cache, put it back to the hard
-			// cache
-			sSoftBitmapCache.remove(url);
+        // Then try the soft reference cache
+        SoftReference<CacheItem> bitmapReference = sSoftBitmapCache.get(url);
+        if (bitmapReference != null) {
+            CacheItem item = bitmapReference.get();
+            if (item != null && item.drawable != null) {
+                BitmapDrawable drawable = (BitmapDrawable) item.drawable;
+                if (drawable != null && drawable.getBitmap() != null) {
+                    final Bitmap bitmap = drawable.getBitmap();
+                    if (bitmap != null) {
+                        // Bitmap found in soft cache, put it back to the hard
+                        // cache
+                        sSoftBitmapCache.remove(url);
 
-			item.refCount.increment();
+                        item.refCount.increment();
 
-			synchronized (sHardBitmapCache) {
-			    sHardBitmapCache.put(url, item);
-			}
+                        synchronized (sHardBitmapCache) {
+                            sHardBitmapCache.put(url, item);
+                        }
 
-			return drawable;
-		    } else {
-			// Soft reference has been Garbage Collected
-			sSoftBitmapCache.remove(url);
-		    }
-		}
-	    }
-	}
+                        return drawable;
+                    } else {
+                        // Soft reference has been Garbage Collected
+                        sSoftBitmapCache.remove(url);
+                    }
+                }
+            }
+        }
 
-	return null;
+        return null;
     }
 
     /**
@@ -712,289 +724,302 @@ public class ImageDownloader extends ImageManager {
      * after a certain inactivity delay.
      */
     public void clearCache() {
-	// sHardBitmapCache.clear();
-	sSoftBitmapCache.clear();
+        // sHardBitmapCache.clear();
+        sSoftBitmapCache.clear();
     }
 
     public void clearVirtualCache() {
-	while (keys.size() > 0) {
-	    removeFromCache(keys.remove(0));
-	}
+        while (keys.size() > 0) {
+            removeFromCache(keys.remove(0));
+        }
 
-	System.gc();
+        System.gc();
     }
 
     public void removeFromCache(String key) {
-	/*
-	 * try { // check why should we unload all drawable from the memory
-	 * throw new RuntimeException(); } catch (RuntimeException ex) {
-	 * Log.e("", "", ex); ex.printStackTrace(); }
-	 */
+        /*
+         * try { // check why should we unload all drawable from the memory
+         * throw new RuntimeException(); } catch (RuntimeException ex) {
+         * Log.e("", "", ex); ex.printStackTrace(); }
+         */
 
-	if (key == null) {
-	    return;
-	}
+        if (key == null) {
+            return;
+        }
 
-	CacheItem item = null;
+        CacheItem item = null;
 
-	synchronized (sHardBitmapCache) {
-	    item = sHardBitmapCache.get(key);
+        synchronized (sHardBitmapCache) {
+            item = sHardBitmapCache.get(key);
 
-	    if (item != null) {
-		// Log.e("", key + " getted (hard refCount: " +
-		// item.refCount.getValue() + ")");
-		item.refCount.decrement();
-		if (item.refCount.getValue() < 1) {
-		    if (item.drawable instanceof BitmapDrawable) {
-			((BitmapDrawable) item.drawable).setCallback(null);
+            if (item != null) {
+                // Log.e("", key + " getted (hard refCount: " +
+                // item.refCount.getValue() + ")");
+                item.refCount.decrement();
+                if (item.refCount.getValue() < 1) {
+                    if (item.drawable instanceof BitmapDrawable) {
+                        ((BitmapDrawable) item.drawable).setCallback(null);
 
-			if (((BitmapDrawable) item.drawable).getBitmap() != null) {
-			    ((BitmapDrawable) item.drawable).getBitmap().recycle();
-			}
-		    }
+                        if (((BitmapDrawable) item.drawable).getBitmap() != null) {
+                            ((BitmapDrawable) item.drawable).getBitmap().recycle();
+                        }
+                    }
 
-		    sHardBitmapCache.remove(key);
-		    // Log.e("", key + " removed (hard refCount: " +
-		    // item.refCount.getValue() + ")");
+                    sHardBitmapCache.remove(key);
+                    // Log.e("", key + " removed (hard refCount: " +
+                    // item.refCount.getValue() + ")");
 
-		    item.drawable = null;
-		} else {
-		    // Log.e("", key + " decreased (hard refCount: " +
-		    // item.refCount.getValue() + ")");
-		}
-	    }
-	}
+                    item.drawable = null;
+                } else {
+                    // Log.e("", key + " decreased (hard refCount: " +
+                    // item.refCount.getValue() + ")");
+                }
+            }
+        }
 
-	if (item == null) {
-	    synchronized (sSoftBitmapCache) {
-		SoftReference<CacheItem> ref = sSoftBitmapCache.contains(key) ? sSoftBitmapCache.get(key) : null;
+        if (item == null) {
+            synchronized (sSoftBitmapCache) {
+                SoftReference<CacheItem> ref = sSoftBitmapCache.contains(key) ? sSoftBitmapCache
+                        .get(key) : null;
 
-		if (ref == null) {
-		    return;
-		}
+                if (ref == null) {
+                    return;
+                }
 
-		item = ref.get();
+                item = ref.get();
 
-		if (item != null) {
-		    // Log.e("", key + " getted (soft refCount: " +
-		    // item.refCount.getValue() + ")");
-		    item.refCount.decrement();
-		    if (item.refCount.getValue() < 1) {
-			if (item.drawable instanceof BitmapDrawable) {
-			    ((BitmapDrawable) item.drawable).setCallback(null);
+                if (item != null) {
+                    // Log.e("", key + " getted (soft refCount: " +
+                    // item.refCount.getValue() + ")");
+                    item.refCount.decrement();
+                    if (item.refCount.getValue() < 1) {
+                        if (item.drawable instanceof BitmapDrawable) {
+                            ((BitmapDrawable) item.drawable).setCallback(null);
 
-			    if (((BitmapDrawable) item.drawable).getBitmap() != null) {
-				((BitmapDrawable) item.drawable).getBitmap().recycle();
-			    }
-			}
+                            if (((BitmapDrawable) item.drawable).getBitmap() != null) {
+                                ((BitmapDrawable) item.drawable).getBitmap().recycle();
+                            }
+                        }
 
-			sSoftBitmapCache.remove(key);
-			// Log.e("", key + " removed (soft refCount: " +
-			// item.refCount.getValue() + ")");
+                        sSoftBitmapCache.remove(key);
+                        // Log.e("", key + " removed (soft refCount: " +
+                        // item.refCount.getValue() + ")");
 
-			item.drawable = null;
-		    } else {
-			// Log.e("", key + " decreased (soft refCount: " +
-			// item.refCount.getValue() + ")");
-		    }
-		}
-	    }
-	}
+                        item.drawable = null;
+                    } else {
+                        // Log.e("", key + " decreased (soft refCount: " +
+                        // item.refCount.getValue() + ")");
+                    }
+                }
+            }
+        }
 
-	System.gc();
+        System.gc();
     }
 
     public static void clearCache(Context context) {
-	File dir = context.getFilesDir();
+        File dir = context.getFilesDir();
 
-	if (dir != null && dir.exists()) {
-	    File[] files = dir.listFiles();
+        if (dir != null && dir.exists()) {
+            File[] files = dir.listFiles();
 
-	    if (files != null) {
-		for (File f : files) {
-		    if (f != null && f.getName().endsWith("_img")) {
-			f.delete();
-		    }
-		}
-	    }
-	}
+            if (files != null) {
+                for (File f : files) {
+                    if (f != null && f.getName().endsWith("_img")) {
+                        f.delete();
+                    }
+                }
+            }
+        }
     }
 
     /**
      * Allow a new delay before the automatic cache clear is done.
      */
     private void resetPurgeTimer() {
-	purgeHandler.removeCallbacks(purger);
-	purgeHandler.postDelayed(purger, DELAY_BEFORE_PURGE);
+        purgeHandler.removeCallbacks(purger);
+        purgeHandler.postDelayed(purger, DELAY_BEFORE_PURGE);
     }
 
     public String getFileNameFromUrl(String url) {
-	return String.valueOf(url.hashCode()) + "_img";
+        return String.valueOf(url.hashCode()) + "_img";
     }
 
     public Bitmap loadFromDisk(String url) {
-	final Context context = StaticContextApplication.getAppContext();
+        final Context context = StaticContextApplication.getAppContext();
 
-	String filename = getFileNameFromUrl(url);
+        String filename = getFileNameFromUrl(url);
 
-	Bitmap b = null;
+        Bitmap b = null;
 
-	try {
-	    InputStream is = context.openFileInput(filename);
-	    b = BitmapFactory.decodeStream(is, null, opt);
+        try {
+            InputStream is = context.openFileInput(filename);
+            b = BitmapFactory.decodeStream(is, null, opt);
 
-	    try {
-		is.close();
-	    } catch (IOException e) {
-		e.printStackTrace();
-	    }
+            try {
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-	    if (b == null) {
-		return null;
-	    }
+            if (b == null) {
+                return null;
+            }
 
-	    if (opt.outHeight < context.getResources().getDisplayMetrics().heightPixels
-		    && opt.outWidth < context.getResources().getDisplayMetrics().widthPixels) {
-		return b;
-	    } else if (opt.outWidth < opt.outHeight) {
-		Bitmap bmp = ImageUtils.getResizedBitmap(b,
-			opt.outHeight > context.getResources().getDisplayMetrics().heightPixels ? context
-				.getResources().getDisplayMetrics().heightPixels : opt.outHeight);
+            if (opt.outHeight < context.getResources().getDisplayMetrics().heightPixels
+                    && opt.outWidth < context.getResources().getDisplayMetrics().widthPixels) {
+                return b;
+            } else if (opt.outWidth < opt.outHeight) {
+                Bitmap bmp = ImageUtils
+                        .getResizedBitmap(
+                                b,
+                                opt.outHeight > context.getResources().getDisplayMetrics().heightPixels ? context
+                                        .getResources().getDisplayMetrics().heightPixels
+                                        : opt.outHeight);
 
-		if (b != null && bmp != b) {
-		    b.recycle();
-		    b = null;
-		}
+                if (b != null && bmp != b) {
+                    b.recycle();
+                    b = null;
+                }
 
-		if (bmp != null) {
-		    return bmp;
-		}
-	    } else {
-		Bitmap bmp = ImageUtils.getResizedBitmap(b,
-			opt.outWidth > context.getResources().getDisplayMetrics().widthPixels ? context.getResources()
-				.getDisplayMetrics().widthPixels : opt.outWidth);
+                if (bmp != null) {
+                    return bmp;
+                }
+            } else {
+                Bitmap bmp = ImageUtils
+                        .getResizedBitmap(
+                                b,
+                                opt.outWidth > context.getResources().getDisplayMetrics().widthPixels ? context
+                                        .getResources()
+                                        .getDisplayMetrics().widthPixels : opt.outWidth);
 
-		if (b != null && bmp != b) {
-		    b.recycle();
-		    b = null;
-		}
+                if (b != null && bmp != b) {
+                    b.recycle();
+                    b = null;
+                }
 
-		if (bmp != null) {
-		    return bmp;
-		}
-	    }
-	} catch (FileNotFoundException e) {
-	    b = null;
-	} catch (OutOfMemoryError e) {
-	    b = null;
-	}
+                if (bmp != null) {
+                    return bmp;
+                }
+            }
+        } catch (FileNotFoundException e) {
+            b = null;
+        } catch (OutOfMemoryError e) {
+            b = null;
+        }
 
-	return b;
+        return b;
     }
 
     public Bitmap loadFromCache(String fileName) {
-	final Context context = StaticContextApplication.getAppContext();
+        final Context context = StaticContextApplication.getAppContext();
 
-	String filename = fileName + "_cache";
+        String filename = fileName + "_cache";
 
-	Bitmap b = null;
+        Bitmap b = null;
 
-	try {
-	    InputStream is = context.openFileInput(filename);
-	    b = BitmapFactory.decodeStream(is, null, opt);
+        try {
+            InputStream is = context.openFileInput(filename);
+            b = BitmapFactory.decodeStream(is, null, opt);
 
-	    try {
-		is.close();
-	    } catch (IOException e) {
-		e.printStackTrace();
-	    }
+            try {
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-	    if (b == null) {
-		return null;
-	    }
+            if (b == null) {
+                return null;
+            }
 
-	    if (opt.outHeight < context.getResources().getDisplayMetrics().heightPixels
-		    && opt.outWidth < context.getResources().getDisplayMetrics().widthPixels) {
-		return b;
-	    } else if (opt.outWidth < opt.outHeight) {
-		Bitmap bmp = ImageUtils.getResizedBitmap(b,
-			opt.outHeight > context.getResources().getDisplayMetrics().heightPixels ? context
-				.getResources().getDisplayMetrics().heightPixels : opt.outHeight);
+            if (opt.outHeight < context.getResources().getDisplayMetrics().heightPixels
+                    && opt.outWidth < context.getResources().getDisplayMetrics().widthPixels) {
+                return b;
+            } else if (opt.outWidth < opt.outHeight) {
+                Bitmap bmp = ImageUtils
+                        .getResizedBitmap(
+                                b,
+                                opt.outHeight > context.getResources().getDisplayMetrics().heightPixels ? context
+                                        .getResources().getDisplayMetrics().heightPixels
+                                        : opt.outHeight);
 
-		if (b != null && bmp != b) {
-		    b.recycle();
-		    b = null;
-		}
+                if (b != null && bmp != b) {
+                    b.recycle();
+                    b = null;
+                }
 
-		if (bmp != null) {
-		    return bmp;
-		}
-	    } else {
-		Bitmap bmp = ImageUtils.getResizedBitmap(b,
-			opt.outWidth > context.getResources().getDisplayMetrics().widthPixels ? context.getResources()
-				.getDisplayMetrics().widthPixels : opt.outWidth);
+                if (bmp != null) {
+                    return bmp;
+                }
+            } else {
+                Bitmap bmp = ImageUtils
+                        .getResizedBitmap(
+                                b,
+                                opt.outWidth > context.getResources().getDisplayMetrics().widthPixels ? context
+                                        .getResources()
+                                        .getDisplayMetrics().widthPixels : opt.outWidth);
 
-		if (b != null && bmp != b) {
-		    b.recycle();
-		    b = null;
-		}
+                if (b != null && bmp != b) {
+                    b.recycle();
+                    b = null;
+                }
 
-		if (bmp != null) {
-		    return bmp;
-		}
-	    }
-	} catch (FileNotFoundException e) {
-	    b = null;
-	} catch (OutOfMemoryError e) {
-	    b = null;
-	}
+                if (bmp != null) {
+                    return bmp;
+                }
+            }
+        } catch (FileNotFoundException e) {
+            b = null;
+        } catch (OutOfMemoryError e) {
+            b = null;
+        }
 
-	return b;
+        return b;
     }
 
     public void putOntoMemory(String url, Bitmap bmp) {
-	synchronized (sHardBitmapCache) {
-	    if (!sHardBitmapCache.containsKey(url) && bmp != null) {
-		bmp.setDensity(0);
+        synchronized (sHardBitmapCache) {
+            if (!sHardBitmapCache.containsKey(url) && bmp != null) {
+                bmp.setDensity(0);
 
-		final Context context = StaticContextApplication.getAppContext();
-		CacheItem item = new CacheItem(new BitmapDrawable(context.getResources(), bmp));
+                final Context context = StaticContextApplication.getAppContext();
+                CacheItem item = new CacheItem(new BitmapDrawable(context.getResources(), bmp));
 
-		sHardBitmapCache.put(url, item);
-	    } else {
-		sHardBitmapCache.get(url).refCount.increment();
-	    }
-	}
+                sHardBitmapCache.put(url, item);
+            } else {
+                sHardBitmapCache.get(url).refCount.increment();
+            }
+        }
     }
 
     @Override
     public void loadImageByUrl(ImageView view, String photoUrl, int requestedExtent,
-	    DefaultImageProvider defaultProvider, NewUrlRequest newUrlRequest) {
-	download(photoUrl, view);
+            DefaultImageProvider defaultProvider, NewUrlRequest newUrlRequest) {
+        download(photoUrl, view);
     }
 
     @Override
     public void removePhoto(ImageView view) {
-	// TODO Auto-generated method stub
+        // TODO Auto-generated method stub
     }
 
     @Override
     public void pause() {
-	// TODO Auto-generated method stub
+        // TODO Auto-generated method stub
     }
 
     @Override
     public void resume() {
-	// TODO Auto-generated method stub
+        // TODO Auto-generated method stub
     }
 
     @Override
     public void cacheBitmap(Request originalRequest, Bitmap bitmap, byte[] photoBytes) {
-	// TODO Auto-generated method stub
+        // TODO Auto-generated method stub
     }
 
     @Override
     public void preloadPhotosInBackground() {
-	// TODO Auto-generated method stub
+        // TODO Auto-generated method stub
     }
 }

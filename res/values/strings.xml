@@ -6,9 +6,15 @@
     <string name="emptyList">You do not have any element in list</string>
     
     <string name="menuTitle">Application options</string>
-    <string name="menuLocations">My places</string>
-    <string name="menuSettings">Settings</string>
-    <string name="menuAbout">About</string>
+    
+    <string name="menuLocationsTitle">Locations</string>
+    <string name="menuLocationsText">My places</string>
+    
+    <string name="menuSettingsTitle">Settings</string>
+    <string name="menuSetLocationText">Set target location</string>
+    
+    <string name="menuAboutTitle">About</string>
+    <string name="menuAboutText">Application</string>
     
 	<string name="action_share">Share</string>
 	<string name="action_search">Search</string>
